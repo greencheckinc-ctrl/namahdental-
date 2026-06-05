@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -184,7 +184,6 @@ tr:hover td{background:#f9fbfc}
 
 /* SETTINGS STYLES */
 .settings-grid{display:grid;grid-template-columns:220px 1fr;gap:0;background:#fff;border-radius:10px;border:1px solid #e0e8ee;overflow:hidden;min-height:500px}
-@media(max-width:768px){.settings-grid{overflow:visible !important}}
 .settings-sidebar{background:#f8fafc;border-right:1px solid #e0e8ee;padding:0}
 .settings-sidebar h3{font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.6px;padding:16px 16px 8px}
 .setnav button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 16px;border:none;background:transparent;font-size:14px;font-weight:600;color:#555;cursor:pointer;text-align:left;border-left:3px solid transparent;transition:.15s}
@@ -413,9 +412,7 @@ tr:hover td{background:#f9fbfc}
   /* Logo smaller on mobile */
   #tb-logo{height:44px !important}
 
-  /* Hide Supabase/Firebase indicators on mobile */
-  #tb-sb-indicator{display:flex !important;width:auto !important;min-width:unset !important;max-width:unset !important;padding:3px 6px !important;background:rgba(255,255,255,0.12) !important;border-radius:20px !important;gap:4px !important;}
-  #tb-sb-label{display:inline !important;font-size:10px !important;max-width:unset !important;}
+  /* Hide Firebase indicators on mobile */
   #tb-fb-indicator{display:flex !important;width:auto !important;min-width:unset !important;max-width:unset !important;padding:3px 6px !important;background:rgba(255,255,255,0.15) !important;border-radius:20px !important;gap:4px !important;}
   #tb-fb-label{display:inline !important;font-size:10px !important;max-width:unset !important;}
   #tb-refresh-btn{display:none !important;}
@@ -440,9 +437,9 @@ tr:hover td{background:#f9fbfc}
   .f input,.f select,.f textarea{font-size:14px;padding:10px 12px}
 
   /* Settings grid: sidebar hidden, accordion shown */
-  .settings-grid{display:block !important;overflow:visible !important;min-height:unset;border:none;background:transparent}
-  .settings-sidebar{display:none !important}
-  .settings-content{padding:12px !important;overflow:visible !important;height:auto !important;max-height:none !important;padding-bottom:100px !important}
+  .settings-grid{grid-template-columns:1fr;min-height:unset}
+  .settings-sidebar{display:none}
+  .settings-content{padding:12px}
   .mob-set-accordion{display:block}
 
   /* Reports grid: sidebar hidden, accordion shown */
@@ -511,10 +508,8 @@ tr:hover td{background:#f9fbfc}
   .xb{width:46px;height:46px;font-size:22px;border-radius:10px;position:relative}
   .xb::after{content:'';position:absolute;inset:-8px}
 
-  /* Save bar wraps + clears iOS/Android browser bottom nav */
-  .save-bar{flex-wrap:wrap;gap:8px;padding-bottom:env(safe-area-inset-bottom,12px)}
-  /* Sticky save bar at bottom of screen on mobile */
-  .mob-sticky-save{display:flex !important;position:fixed;bottom:0;left:0;right:0;z-index:950;background:#fff;border-top:2px solid var(--pri);padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 16px rgba(0,0,0,.15)}
+  /* Save bar wraps */
+  .save-bar{flex-wrap:wrap;gap:8px}
 
   /* Toggle rows */
   .toggle-row .tlabel{font-size:12px}
@@ -639,9 +634,10 @@ tr:hover td{background:#f9fbfc}
 
 </style>
 
-<link rel="icon" type="image/png" sizes="192x192" href="icon192.png"/>
-<link rel="apple-touch-icon" href="icon192.png"/>
-
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"/>
+<link rel="apple-touch-icon" href="icon-192.png"/>
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"/>
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"/>
 </head>
 <body>
 
@@ -971,10 +967,6 @@ function showLockAfterSplash(){
   </div>
   <div class="topbar-right-group" style="display:flex;flex-direction:row;align-items:center;gap:4px">
     <button id="tb-refresh-btn" title="Refresh" onclick="appRefresh()" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.15);border:none;cursor:pointer;color:rgba(255,255,255,0.95);font-size:11px;font-weight:600;white-space:nowrap;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'"><span id="tb-refresh-icon" style="font-size:13px;display:inline-block">🔄</span>&nbsp;Refresh</button>
-    <div id="tb-sb-indicator" title="Supabase Sync Status" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.12);width:90px;min-width:90px;max-width:90px;justify-content:center;box-sizing:border-box;overflow:hidden">
-      <div id="tb-sb-dot" style="width:11px;height:11px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .4s;box-shadow:0 0 4px rgba(0,0,0,0.3)"></div>
-      <span id="tb-sb-label" style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;max-width:52px">SB</span>
-    </div>
     <div id="tb-fb-indicator" title="Firebase Sync Status" style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;background:rgba(255,255,255,0.15);cursor:pointer;width:90px;min-width:90px;max-width:90px;justify-content:center;box-sizing:border-box;overflow:hidden" onclick="document.querySelector('[data-tab=settings]')?.click();setTimeout(()=>document.getElementById('fb-status-box')?.scrollIntoView({behavior:'smooth'}),300)">
       <div id="tb-fb-dot" style="width:11px;height:11px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .4s;box-shadow:0 0 4px rgba(0,0,0,0.3)"></div>
       <span id="tb-fb-label" style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.9);white-space:nowrap;overflow:hidden;max-width:52px">FB</span>
@@ -1053,7 +1045,7 @@ function showLockAfterSplash(){
   </div>
 
   <!-- Hidden placeholder for JS (do not remove) -->
-  <div id="dash-appt-section-placeholder" style="display:none"></div>
+  <div id="dash-appt-section" style="display:none"></div>
 
   <!-- MONTHLY INCOME PANEL -->
   <div id="monthly-income-panel" style="background:#fff;border-radius:10px;border:1px solid #e0e8ee;margin-bottom:16px;overflow:hidden;">
@@ -2277,7 +2269,6 @@ function showLockAfterSplash(){
       <div style="display:none">
         <button onclick="showSetSection('email',this);closeMobSetMenu()" style="padding-left:28px"><span class="icon">&#128140;</span> Email Sync</button>
         <button onclick="showSetSection('firebase',this);closeMobSetMenu()" style="padding-left:28px"><span class="icon">&#9889;</span> Live Sync (Firebase)</button>
-        <button onclick="showSetSection('supabase',this);closeMobSetMenu()" style="padding-left:28px"><span class="icon">&#9729;</span> Supabase Backup</button>
       </div>
     </div>
   </div>
@@ -2305,7 +2296,6 @@ function showLockAfterSplash(){
         <div id="adv-sync-body" style="display:none">
           <button onclick="showSetSection('email',this)" style="padding-left:28px"><span class="icon">&#128140;</span>Email Sync</button>
           <button onclick="showSetSection('firebase',this)" style="padding-left:28px"><span class="icon">&#9889;</span>Live Sync (Firebase)</button>
-          <button onclick="showSetSection('supabase',this)" style="padding-left:28px"><span class="icon">&#9729;</span>Supabase Backup</button>
         </div>
       </div>
     </div>
@@ -2402,10 +2392,6 @@ function showLockAfterSplash(){
         <div class="save-bar">
           <button class="btn bg" onclick="saveClinic()">&#10003; Save Clinic Info</button>
           <span class="saved-msg" id="clinic-saved">&#10003; Saved successfully!</span>
-        </div>
-        <!-- Mobile sticky save -->
-        <div style="display:none" id="mob-clinic-save-bar" class="mob-sticky-save">
-          <button class="btn bg" style="flex:1;padding:14px;font-size:15px" onclick="saveClinic()">&#10003; Save Clinic Info</button>
         </div>
       </div>
 
@@ -2928,120 +2914,6 @@ function showLockAfterSplash(){
 
       </div>
 
-      <!-- SUPABASE SYNC -->
-      <div id="set-supabase" class="set-section">
-        <div class="set-title">&#9729; Supabase Sync (Backup)</div>
-        <div class="set-sub">Secondary cloud backup &mdash; data saved to both Firebase &amp; Supabase for maximum safety.</div>
-
-        <div id="sb-status-box" style="background:#f8fafc;border:1px solid #e0e8ee;border-radius:8px;padding:12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
-          <div id="sb-dot" style="width:10px;height:10px;border-radius:50%;background:#ccc;flex-shrink:0"></div>
-          <div id="sb-status-msg" style="font-size:12px;color:#888">Not configured</div>
-        </div>
-
-        <div class="set-group">
-          <label>Supabase Project URL</label>
-          <input id="sb-url" type="url" placeholder="https://xyzxyz.supabase.co" oninput="sbSaveConfig()"/>
-          <div class="hint">Supabase &#8594; Project Settings &#8594; API &#8594; Project URL</div>
-        </div>
-        <div class="set-group">
-          <label>Supabase Anon Key</label>
-          <input id="sb-key" type="password" placeholder="eyJhbGci..." oninput="sbSaveConfig()"/>
-          <div class="hint">Supabase &#8594; Project Settings &#8594; API &#8594; anon public key</div>
-        </div>
-        <div class="set-group">
-          <label>&#128274; Security Secret Key</label>
-          <div style="display:flex;gap:6px;align-items:center">
-            <input id="sb-secret" type="password" placeholder="Enter strong secret key" oninput="sbSaveConfig();var b=document.getElementById('sb-update-secret-btn');if(b){b.style.background='#c0392b';b.textContent='⚠️ Secret Changed — Update in Supabase';}" style="flex:1"/>
-            <button type="button" onclick="(function(){var i=document.getElementById('sb-secret');i.type=i.type==='password'?'text':'password';})()" class="btn bo sm" style="flex-shrink:0;padding:7px 10px">&#128065;</button>
-          </div>
-          <div class="hint">⚠️ When you change the secret key, click <b>🔑 Update Secret in Supabase</b> below — SQL will be generated automatically.</div>
-        </div>
-        <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:4px">
-          <button class="btn bp" onclick="sbTestConnection()">&#128268; Test Connection</button>
-          <button class="btn brec sm" onclick="sbUpdateSecretKey()" id="sb-update-secret-btn">&#128273; Update Secret in Supabase</button>
-          <button class="btn bg sm" onclick="if(typeof sbPollNow==='function'){sbPollNow();var m=document.getElementById('sb-test-msg');if(m){m.style.display='block';m.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim();m.textContent='🔄 Polling Supabase for new data…';setTimeout(function(){m.textContent='✅ Poll complete — UI updated';},2500);}}">&#128260; Sync Now</button>
-        </div>
-        <div id="sb-test-msg" style="font-size:12px;margin-top:10px;display:none"></div>
-
-        <!-- REALTIME STATUS -->
-        <div style="margin-top:14px;background:#f0f8ff;border:1px solid #b3d9f0;border-radius:8px;padding:12px;">
-          <div style="font-size:12px;font-weight:700;color:var(--pri);margin-bottom:6px">⚡ Real-time Sync Status</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#555;margin-bottom:6px">
-            <span id="sb-rt-dot" style="width:10px;height:10px;border-radius:50%;background:#ccc;display:inline-block;flex-shrink:0;"></span>
-            <span id="sb-rt-msg">Not started — configure URL &amp; Key above</span>
-          </div>
-          <div style="font-size:11px;color:#888;">App automatically polls Supabase every 30 seconds for new data from other devices. You can also press <b>Sync Now</b> above for instant update.</div>
-        </div>
-
-        <!-- PUSH / PULL -->
-        <div style="margin-top:18px">
-          <div class="sec" style="margin-bottom:10px">&#128260; Manual Push / Pull</div>
-
-          <!-- PUSH -->
-          <div style="background:#f0f8ff;border:1px solid #b3d9f0;border-radius:10px;padding:14px;margin-bottom:10px">
-            <div style="font-size:13px;font-weight:700;color:var(--pri);margin-bottom:4px">&#11014; Push — Local → Supabase</div>
-            <div style="font-size:11px;color:#666;margin-bottom:10px">તમારો local data Supabase માં upload કરો</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-              <button class="btn bp sm" onclick="sbPushTable('niva_bills','bills')">&#128196; Bills</button>
-              <button class="btn bp sm" onclick="sbPushTable('niva_appointments','appointments')">&#128197; Appts</button>
-              <button class="btn bp sm" onclick="sbPushTable('niva_expenses','expenses')">&#128176; Expenses</button>
-              <button class="btn bp sm" onclick="sbPushTable('niva_patient_files','patientFiles')">&#128101; Patients</button>
-              <button class="btn bp sm" onclick="sbPushLogo(document.getElementById('sb-push-msg'))">&#128444; Logo</button>
-              <button class="btn bp sm" onclick="(function(){var m=document.getElementById('sb-push-msg');if(m){m.style.display='block';m.style.color='var(--pri)';m.textContent='🔄 Clinic info push…';}window.sbSyncClinic&&window.sbSyncClinic().then(function(){if(m){m.style.color='#1b6e35';m.textContent='✅ Clinic info pushed to Supabase!';}}).catch(function(e){if(m){m.style.color='#c0392b';m.textContent='❌ '+e.message;}});})()">&#127968; Clinic Info</button>
-            </div>
-            <button class="btn bp" style="width:100%" onclick="sbFullSync()">&#11014; Push All Data</button>
-            <div id="sb-push-msg" style="font-size:12px;margin-top:8px;display:none"></div>
-          </div>
-
-          <!-- PULL -->
-          <div style="background:#f0fff4;border:1px solid #a9dfbf;border-radius:10px;padding:14px">
-            <div style="font-size:13px;font-weight:700;color:#1b6e35;margin-bottom:4px">&#11015; Pull — Supabase → Local</div>
-            <div style="font-size:11px;color:#666;margin-bottom:10px">Supabase નો data આ device પર restore કરો</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-              <button class="btn bo sm" onclick="sbPullTable('niva_bills','bills')">&#128196; Bills</button>
-              <button class="btn bo sm" onclick="sbPullTable('niva_appointments','appointments')">&#128197; Appts</button>
-              <button class="btn bo sm" onclick="sbPullTable('niva_expenses','expenses')">&#128176; Expenses</button>
-              <button class="btn bo sm" onclick="sbPullTable('niva_patient_files','patientFiles')">&#128101; Patients</button>
-              <button class="btn bo sm" onclick="sbPullLogo(document.getElementById('sb-pull-msg'))">&#128444; Logo</button>
-              <button class="btn bo sm" onclick="window.sbPullClinic&&window.sbPullClinic(document.getElementById('sb-pull-msg'))">&#127968; Clinic Info</button>
-            </div>
-            <button class="btn bo" style="width:100%" onclick="sbPullAll()">&#11015; Pull All Data (Restore)</button>
-            <div id="sb-pull-msg" style="font-size:12px;margin-top:8px;display:none"></div>
-            <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:8px;margin-top:10px;font-size:11px;color:#7a5c00">
-              &#9888; Pull કરવાથી local data Supabase ના data સાથે merge થશે. નવો data delete નહીં થાય.
-            </div>
-          </div>
-        </div>
-
-
-        <!-- SETTINGS EXPORT / IMPORT -->
-        <div style="margin-top:20px">
-          <div class="sec" style="margin-bottom:10px">&#9881; Settings Backup — Export / Import</div>
-          <div style="font-size:12px;color:#666;margin-bottom:12px">Clinic info, billing options, theme, Firebase &amp; Supabase config — save everything in one file or restore from backup.</div>
-          <div style="background:#f0f8ff;border:1px solid #b3d9f0;border-radius:10px;padding:14px;margin-bottom:10px">
-            <div style="font-size:13px;font-weight:700;color:var(--pri);margin-bottom:4px">&#11014; Export Settings</div>
-            <div style="font-size:11px;color:#666;margin-bottom:10px">Download all your settings as a <b>.json</b> file.</div>
-            <button class="btn bp" style="width:100%" onclick="nivaExportSettings()">&#11014; Download Settings Backup</button>
-            <div id="sb-export-msg" style="font-size:12px;margin-top:8px;display:none"></div>
-          </div>
-          <div style="background:#f0fff4;border:1px solid #a9dfbf;border-radius:10px;padding:14px">
-            <div style="font-size:13px;font-weight:700;color:#1b6e35;margin-bottom:4px">&#11015; Import Settings</div>
-            <div style="font-size:11px;color:#666;margin-bottom:10px">Select a previously exported <b>.json</b> settings file to restore.</div>
-            <label style="display:block;background:#1b6e35;color:#fff;font-size:12px;font-weight:700;padding:8px 14px;border-radius:6px;cursor:pointer;text-align:center;width:100%;box-sizing:border-box">
-              &#11015; Select Settings File
-              <input type="file" accept=".json" style="display:none" onchange="nivaImportSettings(this)">
-            </label>
-            <div id="sb-import-msg" style="font-size:12px;margin-top:8px;display:none"></div>
-            <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:8px;margin-top:10px;font-size:11px;color:#7a5c00">
-              ⚠️ Importing will replace your existing settings. Bills &amp; patient data will not be affected.
-            </div>
-          </div>
-        </div>
-
-        <div style="background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px;margin-top:16px;font-size:12px;color:#7a5c00">
-          &#9888; <b>Setup required:</b> Click <b>Test Connection</b> after entering credentials &mdash; tables will be auto-created.
-        </div>
-      </div>
 
       <!-- LOCAL SERVER SYNC -->
 
@@ -4480,12 +4352,12 @@ function updateTopbar(){
   if(loginTitle)loginTitle.textContent=CFG.clinic.name||'';
   // Dynamic clinic name — update all branded UI elements
   var _cn=CFG.clinic.name||'Niva Dental';
-  var _loginFooter=document.getElementById('login-footer-clinic');
-  if(_loginFooter)_loginFooter.innerHTML=_cn+'&nbsp;|&nbsp; <strong style="color:#2ecc71">GreenCheck inc.</strong>';
-  var _trialName=document.getElementById('trial-clinic-name');
-  if(_trialName)_trialName.textContent=_cn;
-  var _trialFooter=document.getElementById('trial-footer-clinic');
-  if(_trialFooter)_trialFooter.textContent=_cn;
+  var _lf=document.getElementById('login-footer-clinic');
+  if(_lf)_lf.innerHTML=_cn+'&nbsp;|&nbsp; <strong style="color:#2ecc71">GreenCheck inc.</strong>';
+  var _tn=document.getElementById('trial-clinic-name');
+  if(_tn)_tn.textContent=_cn;
+  var _tf=document.getElementById('trial-footer-clinic');
+  if(_tf)_tf.textContent=_cn;
 }
 (function(){
   function updateClock(){
@@ -4830,20 +4702,6 @@ function dedupById(arr){
   });
   return Array.from(map.values());
 }
-// Dedup appointments that share the same billId+date+time (different IDs but same logical appt)
-function dedupApptsByBill(arr){
-  const seen=new Map();
-  const out=[];
-  // Sort newest first so we keep the latest
-  const sorted=[...arr].sort((a,b)=>((b.updatedAt||b.createdAt||0)-(a.updatedAt||a.createdAt||0)));
-  sorted.forEach(function(a){
-    if(!a||!a.id)return;
-    // Key: billId+date+status (or just id if no billId)
-    const key=a.billId?(a.billId+'|'+a.status):'__'+a.id;
-    if(!seen.has(key)){seen.set(key,true);out.push(a);}
-  });
-  return out;
-}
 
 function sv(){
   bills=dedupById(bills);
@@ -4869,10 +4727,8 @@ function gid(){
 // ── APPOINTMENTS STORAGE ──────────────────────────────────────────────────────
 let appointments=[];
 try{appointments=JSON.parse(localStorage.getItem('niva_appointments')||'[]');}catch(e){}
-// One-time dedup of any duplicates already in storage
-try{if(appointments.length>1){var _dd=dedupApptsByBill(dedupById(appointments));if(_dd.length<appointments.length){appointments=_dd;localStorage.setItem('niva_appointments',JSON.stringify(appointments));console.log('[Niva] Deduped '+(_dd.length)+' appts from '+(appointments.length||_dd.length));}}}catch(e){}
 function svAppt(){
-  appointments=dedupById(dedupApptsByBill(appointments));
+  appointments=dedupById(appointments);
   try{localStorage.setItem('niva_appointments',JSON.stringify(appointments));}catch(e){}
   idbSaveAll('appointments',appointments).catch(e=>console.warn('[NivaIDB] svAppt:',e));
 }
@@ -5914,10 +5770,8 @@ function resetApptMsgTemplate(){
 
 function saveApptToStorage(){
   if(!_apptBill)return;
-  // Reuse existing ID to prevent Firebase sync from creating duplicates
-  const _existingAppt=appointments.find(a=>a.billId===_apptBill.id&&a.status==='Scheduled');
   const appt={
-    id:(_existingAppt&&_existingAppt.id)||'APPT-'+Date.now(),
+    id:'APPT-'+Date.now(),
     billId:_apptBill.id,
     patient:_apptBill.patient,
     phone:(document.getElementById('appt-phone').value||'').trim(),
@@ -5927,8 +5781,7 @@ function saveApptToStorage(){
     purpose:document.getElementById('appt-purpose').value.trim(),
     notes:document.getElementById('appt-notes').value.trim(),
     additionalDetail:(function(){var el=document.getElementById('appt-adddet');return el?el.value.trim():'';})(),
-    createdAt:(_existingAppt&&_existingAppt.createdAt)||Date.now(),
-    updatedAt:Date.now(),
+    createdAt:Date.now(),
     status:'Scheduled'
   };
   // Remove any previous pending appointment for same bill (keep only latest)
@@ -6622,8 +6475,6 @@ function doDelete(){
   // ── Firebase delete: set bill to null so other devices remove it ──
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(F.dburl) fbPUT('bills/'+fbSafeKey(_did),null).then(()=>fbFlashSynced()).catch(e=>console.warn('FB bill delete:',e.message));
-  // ── Supabase delete ──
-  if(typeof sbDeleteBill==='function') sbDeleteBill(_did);
 }
 let _savedScrollY=0;
 let _openModalCount=0;
@@ -6820,14 +6671,6 @@ function showSetSection(name,btn){
     var arrow=document.getElementById('adv-sync-arrow');
     if(body){body.style.display='block';}
     if(arrow){arrow.textContent='▼';}
-  }
-  // On mobile: scroll to top of settings content so Save button is reachable by scrolling down
-  if(window.innerWidth<=768){
-    setTimeout(function(){
-      var sc=document.querySelector('.settings-content');
-      if(sc){sc.scrollTop=0;}
-      window.scrollTo(0,0);
-    },80);
   }
 }
 function loadClinicForm(){
@@ -7682,82 +7525,6 @@ function getApptLabel(billId){
   return '📅 ' + mon + ' ' + day;
 }
 
-
-function showMonthlyCollectedDetail(monYY, monLabel){
-  const cur = (CFG&&CFG.billing&&CFG.billing.currency)||'₹';
-  const fmtD = d => { if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return d;} };
-
-  // Build list of all payments in this month
-  const rows = [];
-  bills.forEach(b => {
-    const bm = b.mode || 'Cash';
-    // First payment (paidNow) — use bill date
-    if((b.date||'').slice(0,7) === monYY && (b.paidNow||0) > 0){
-      rows.push({ date: b.date, patient: b.patient, billId: b.id, amt: b.paidNow||0, mode: bm, type: 'Bill payment' });
-    }
-    // Subsequent payments from payHistory
-    (b.payHistory||[]).forEach(p => {
-      if((p.date||'').slice(0,7) === monYY && (p.amt||0) > 0){
-        rows.push({ date: p.date, patient: b.patient, billId: b.id, amt: p.amt||0, mode: p.mode||bm, type: 'Part payment' });
-      }
-    });
-  });
-
-  // Sort by date descending
-  rows.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-
-  const total = rows.reduce((s,r) => s+r.amt, 0);
-  const subEl = document.getElementById('mon-collected-modal-sub');
-  if(subEl) subEl.textContent = monLabel + ' · ' + rows.length + ' payments · Total: ' + cur + total.toLocaleString('en-IN');
-
-  // Group by date
-  const byDate = {};
-  rows.forEach(r => { if(!byDate[r.date]) byDate[r.date]=[]; byDate[r.date].push(r); });
-  const dates = Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
-
-  let html = '';
-  if(!rows.length){
-    html = '<div style="text-align:center;padding:40px;color:#aaa;font-size:13px">No payments collected this month.</div>';
-  } else {
-    dates.forEach(date => {
-      const dayRows = byDate[date];
-      const dayTotal = dayRows.reduce((s,r)=>s+r.amt,0);
-      html += `<div style="background:#f5f8fa;padding:8px 16px;font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #e0e8ee;display:flex;justify-content:space-between">
-        <span>📅 ${fmtD(date)}</span>
-        <span style="color:#1b6e35">${cur}${dayTotal.toLocaleString('en-IN')}</span>
-      </div>`;
-      dayRows.forEach(r => {
-        const modeColor = r.mode==='Cash'?'#1b6e35':r.mode==='UPI'?'#7c3aed':r.mode==='Card'?'#0066cc':'#555';
-        html += `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #f0f3f5;gap:8px" onclick="openBill('${r.billId}')" style="cursor:pointer">
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:700;font-size:13px;color:#222">👤 ${r.patient}</div>
-            <div style="font-size:11px;color:#888;margin-top:2px">${r.billId}${r.type==='Part payment'?' · Part payment':''}</div>
-          </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div style="font-size:14px;font-weight:700;color:#1b6e35">${cur}${r.amt.toLocaleString('en-IN')}</div>
-            <span style="font-size:10px;font-weight:700;color:${modeColor};background:${modeColor}18;padding:2px 7px;border-radius:10px">${r.mode}</span>
-          </div>
-        </div>`;
-      });
-    });
-    // Grand total footer
-    html += `<div style="display:flex;justify-content:space-between;padding:14px 16px;background:#f0faf4;font-weight:700;font-size:14px;border-top:2px solid #a8d5b8">
-      <span style="color:#1b6e35">Total Collected</span>
-      <span style="color:#1b6e35">${cur}${total.toLocaleString('en-IN')}</span>
-    </div>`;
-  }
-
-  const bodyEl = document.getElementById('mon-collected-modal-body');
-  if(bodyEl) bodyEl.innerHTML = html;
-  // Make rows clickable to open bill
-  bodyEl.querySelectorAll('[onclick]').forEach(el => {
-    el.style.cursor='pointer';
-    el.addEventListener('mouseover',()=>el.style.background='#f9fbfc');
-    el.addEventListener('mouseout',()=>el.style.background='');
-  });
-  openM('mon-collected-modal');
-}
-
 function renderDash(){
   // Fix any appointments whose saved billId points to a bill belonging to a different patient
   var _apptFixed=false;
@@ -7942,7 +7709,7 @@ function renderDash(){
   const titleEl=document.getElementById('monthly-panel-title');
   if(titleEl) titleEl.textContent=monLabel+' — Income';
   if(mstatsEl) mstatsEl.innerHTML=`
-    <div class="stat" style="border-left:3px solid #1b6e35;cursor:pointer" onclick="showMonthlyCollectedDetail('${monYY}','${monLabel}')" title="Click to see payment details"><div class="lb">Monthly Collected ✓ <span style="font-size:9px;color:#1b6e35;opacity:.7">▼ Detail</span></div><div class="vl g">${cur}${monCollected.toLocaleString('en-IN')}</div></div>
+    <div class="stat" style="border-left:3px solid #1b6e35"><div class="lb">Monthly Collected ✓</div><div class="vl g">${cur}${monCollected.toLocaleString('en-IN')}</div></div>
     <div class="stat" style="border-left:3px solid var(--pri)"><div class="lb">Monthly Billed</div><div class="vl b">${cur}${monBilled.toLocaleString('en-IN')}</div></div>
     <div class="stat" style="border-left:3px solid #e67e22"><div class="lb">Monthly Pending</div><div class="vl" style="color:#e67e22">${cur}${monPend.toLocaleString('en-IN')}</div></div>
     <div class="stat"><div class="lb">Cash (Month)</div><div class="vl b">${cur}${monCash.toLocaleString('en-IN')}</div></div>
@@ -8248,7 +8015,7 @@ function _renderIncomeGraphNow(){
   ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,W,H);
 
-  const PAD={top:48,right:isMobile?36:44,bottom:isMobile?68:66,left:isMobile?48:56};
+  const PAD={top:36,right:20,bottom:isMobile?54:52,left:isMobile?48:56};
   const cW=W-PAD.left-PAD.right;
   const cH=H-PAD.top-PAD.bottom;
   const n=months.length;
@@ -8333,15 +8100,11 @@ function _renderIncomeGraphNow(){
           var lv=val>=100000?(val/100000).toFixed(1)+'L':val>=1000?(val/1000).toFixed(val%1000===0?0:1)+'k':Math.round(val).toString();
           ctx.save();
           ctx.textAlign='center';
-          ctx.textBaseline='bottom';
-          var efs=isSel?11:10;
-          ctx.font=(isSel?'bold ':'')+efs+'px Arial';
-          var ly=Math.max(PAD.top+efs+4,y-10);
-          var lx2=Math.max(PAD.left+22,Math.min(W-PAD.right-22,x));
-          var tw2=ctx.measureText(cur+lv).width;
-          ctx.fillStyle='rgba(255,255,255,0.85)';
-          ctx.fillRect(lx2-tw2/2-2,ly-efs-2,tw2+4,efs+4);
+          ctx.textBaseline='alphabetic';
+          ctx.font=(isSel?'bold ':'')+9+'px Arial';
           ctx.fillStyle=EXPENSE_COLOR;
+          var ly=Math.max(PAD.top+2,y-9);
+          var lx2=Math.max(PAD.left+18,Math.min(W-PAD.right-18,x));
           ctx.fillText(cur+lv,lx2,ly);
           ctx.restore();
         }
@@ -8363,7 +8126,7 @@ function _renderIncomeGraphNow(){
     var val=m[SK];
     if(val<=0) return;
     var x=xPos(i);
-    var y=Math.max(PAD.top+4,yPos(val)-12);
+    var y=Math.max(PAD.top+2,yPos(val)-9);
     var lv=val>=100000?(val/100000).toFixed(1)+'L':val>=1000?(val/1000).toFixed(val%1000===0?0:1)+'k':Math.round(val).toString();
     var isCurrent=m.key===tod.slice(0,7);
     var isSel=m.key===selMonth;
@@ -8398,7 +8161,7 @@ function _renderIncomeGraphNow(){
     var lbl=m.lbl.replace('\n',' ');
     var bold=isCurrent||isSel;
     ctx.save();
-    ctx.translate(x,axisY+8);
+    ctx.translate(x,axisY+6);
     ctx.rotate(ANGLE);
     ctx.font=(bold?'bold ':'')+FSIZE+'px Arial';
     ctx.fillStyle=isCurrent?sColor:(isSel?'#222':'#333');
@@ -8410,16 +8173,11 @@ function _renderIncomeGraphNow(){
   lblItems.forEach(function(lb){
     ctx.save();
     ctx.textAlign='center';
-    ctx.textBaseline='bottom';
-    var fs=lb.isSel?FSIZE_VAL+2:FSIZE_VAL+1;
-    ctx.font=(lb.isSel?'bold ':'')+fs+'px Arial';
-    var cy=Math.max(PAD.top+fs+4,lb.y);
-    var cx=Math.max(PAD.left+22,Math.min(W-PAD.right-22,lb.x));
-    // White background for readability
-    var tw=ctx.measureText(lb.lv).width;
-    ctx.fillStyle='rgba(255,255,255,0.85)';
-    ctx.fillRect(cx-tw/2-2,cy-fs-2,tw+4,fs+4);
-    ctx.fillStyle=lb.isSel?sColor:(lb.isCurrent?sColor:'#444');
+    ctx.textBaseline='alphabetic';
+    ctx.font=(lb.isSel?'bold ':'')+(lb.isSel?FSIZE_VAL+1:FSIZE_VAL-1)+'px Arial';
+    ctx.fillStyle=lb.isSel?sColor:(lb.isCurrent?sColor:'#333');
+    var cy=Math.max(PAD.top+2,lb.y);
+    var cx=Math.max(PAD.left+18,Math.min(W-PAD.right-18,lb.x));
     ctx.fillText(lb.lv,cx,cy);
     ctx.restore();
   });
@@ -9157,7 +8915,7 @@ function importFromDB(){
   alert(added>0?'✅ '+added+' medicine(s) imported to My Directory!':'All matched medicines already in directory.');
 }
 
-// openRxMedDirectory defined below
+function openRxMedDirectory(){showRxTab('directory');}
 
 // ── Patient autocomplete ──
 function rxPatientInput(val){
@@ -11033,29 +10791,6 @@ function printSummaryReport(){
   </body></html>`;
   openPreviewModal('summary',null,html,`Summary Report (${f.length} bills)`);
 }
-function toggleMobSetMenu(btn){
-  var list=document.getElementById('mob-set-list');
-  if(!list)return;
-  var isOpen=list.classList.contains('open');
-  if(isOpen){list.classList.remove('open');btn.classList.remove('open');}
-  else{list.classList.add('open');btn.classList.add('open');}
-}
-function closeMobSetMenu(){
-  var list=document.getElementById('mob-set-list');
-  var btn=document.querySelector('.mob-set-accordion-btn');
-  if(list)list.classList.remove('open');
-  if(btn)btn.classList.remove('open');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function openMobDrawer(){
-  document.getElementById('mob-drawer').classList.add('open');
-  document.getElementById('mob-nav-overlay').classList.add('open');
-}
-function closeMobDrawer(){
-  document.getElementById('mob-drawer').classList.remove('open');
-  document.getElementById('mob-nav-overlay').classList.remove('open');
-}
-
 function showTab(name,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('act'));
@@ -11065,12 +10800,6 @@ function showTab(name,btn){
   // sync mobile drawer highlight
   const mobBtn=document.getElementById('mob-nav-'+name);
   if(mobBtn)mobBtn.classList.add('act');
-  // Hide FABs on settings/reports/prescription/expenses — show only on billing-related tabs
-  const _fabNewbill=document.getElementById('mob-fab-newbill');
-  const _fabAppt=document.getElementById('mob-fab-appt');
-  const _fabHide=['settings','reports','prescription','expenses','patientfile'];
-  if(_fabNewbill) _fabNewbill.style.display=_fabHide.includes(name)?'none':'';
-  if(_fabAppt) _fabAppt.style.display=_fabHide.includes(name)?'none':'';
   if(name==='settings'){loadClinicForm();renderThemeGrid();loadBillingForm();loadEmailForm();loadFBForm();loadPFForm();loadApptMsgForm();setTimeout(refreshSetActivationCard,50);showSetSection('clinic',document.querySelector('.setnav button:first-child'));}
   if(name==='expenses')renderExp();
   if(name==='reports'){setTimeout(()=>{
@@ -11920,10 +11649,8 @@ function saveFBConfig(){
   CFG.firebase.syncToggles.realtime=_rtEl?_rtEl.checked:true;
   CFG.firebase.realtime=CFG.firebase.syncToggles.realtime;
 
-  // Reset cached auth token + rate-limit so next request re-authenticates with new credentials
-  _fbAuthToken=null; _fbAuthExpiry=0; _fbAuthUser=null; _fbAuthUid=null;
-  _fbSignInRetryAfter=0; _fbSignInPending=null;
-  try{sessionStorage.removeItem('_niva_fb_token');sessionStorage.removeItem('_niva_fb_exp');sessionStorage.removeItem('_niva_fb_uid');sessionStorage.removeItem('_niva_fb_email');}catch(e){}
+  // Reset cached auth token so next request re-authenticates with new credentials
+  _fbAuthToken=null; _fbAuthExpiry=0; _fbAuthUser=null;
   saveSettings(CFG);
   const m=document.getElementById('fb-saved');m.classList.add('show');setTimeout(()=>m.classList.remove('show'),2500);
   fbSetAuthStatus('info','🔄 Reconnecting with new settings…');
@@ -11995,16 +11722,12 @@ function fbFlashSynced(){
 function testFBConnection(){
   const _F={...DEF_FB,...(CFG.firebase||{})};
   if(!_F.dburl||!_F.apikey){setFBStatus('idle','Enter Firebase config above','#aaa');return;}
-  // Clear any rate-limit block so test can actually attempt a fresh auth
-  _fbSignInRetryAfter=0; _fbSignInPending=null;
-  _fbAuthToken=null; _fbAuthExpiry=0;
-  try{sessionStorage.removeItem('_niva_fb_token');sessionStorage.removeItem('_niva_fb_exp');}catch(e){}
   setFBStatus('loading','Testing connection…','#f39c12');
   fbGET('_ping')
-    .then(()=>setFBStatus('connected','Connected to '+(CFG.clinic&&CFG.clinic.name?CFG.clinic.name:'Firebase'),'#1b6e35'))
+    .then(()=>setFBStatus('connected','Connected to '+((CFG.clinic&&CFG.clinic.name)?CFG.clinic.name:'Firebase'),'#1b6e35'))
     .catch(e=>{
       if(e.message.includes('404')||e.message.includes('200')){
-        setFBStatus('connected','Connected to '+(CFG.clinic&&CFG.clinic.name?CFG.clinic.name:'Firebase'),'#1b6e35');
+        setFBStatus('connected','Connected to '+((CFG.clinic&&CFG.clinic.name)?CFG.clinic.name:'Firebase'),'#1b6e35');
       } else if(e.message.includes('401')||e.message.includes('403')||e.message.includes('Unauthorized')){
         setFBStatus('error','Connected – set DB Rules to allow read/write','#c0392b');
       } else {
@@ -12071,7 +11794,7 @@ function fbSyncPF(p){
   fbPATCH('patient_files',data).then(()=>fbFlashSynced()).catch(e=>console.warn('FB patient_files sync:',e.message));
 }
 function fbDeletePF(id){
-  // ── Mark as deleted so Firebase/Supabase pull never restores this patient ──
+  // ── Mark as deleted so Firebase pull never restores this patient ──
   if(typeof pfMarkDeleted==='function') pfMarkDeleted(id);
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
@@ -12126,8 +11849,6 @@ function fbSyncClinic(){
   fbPUT(ciPath+'/logo', logoPayload)
     .catch(e=>console.warn('FB logo sync failed (large image?):', e.message));
 
-  // ── Also sync clinic info + logo to Supabase (if configured) ──
-  if(typeof window.sbSyncClinic === 'function') window.sbSyncClinic();
 }
 // ── Selective Push Modal ──────────────────────────────────────────────────────
 (function(){
@@ -12446,7 +12167,7 @@ function fbPullAll(silent){
           if(idx===-1){appointments.unshift(ra);aAdded++;}
           else if((ra.createdAt||ra.updatedAt||0)>(appointments[idx].createdAt||appointments[idx].updatedAt||0)){appointments[idx]=ra;aUpdated++;}
         });
-        appointments=dedupById(dedupApptsByBill(appointments));
+        appointments=dedupById(appointments);
         svAppt();
         // Push any local appointments not yet in Firebase (e.g. saved offline or on another device)
         fbSyncMissingAppts(apptData);
@@ -12882,7 +12603,7 @@ function startFBListener(){
       // Only merge remote data in; null-keyed deletions handled above.
       // appointments = appointments.filter(a => remoteIds.has(a.id)); // ← REMOVED
       if(aChanged){
-        appointments=dedupById(dedupApptsByBill(appointments));svAppt();
+        appointments=dedupById(appointments);svAppt();
         renderDashAppts();
         if(typeof renderApptTabFull==='function')renderApptTabFull();
       }
@@ -14088,9 +13809,9 @@ async function checkPassword(){
 }
 
 // Expose helpers for the rest of the app
-// getAttemptState — defined in IIFE above
-//function getAttemptState(){ try{ return JSON.parse(localStorage.getItem(\'niva_pw_attempts\')||'{"count":0,"lockedUntil":0}'); }catch(e){ return {count:0,lockedUntil:0}; } }
-// setAttemptState and resetAttempts defined in IIFE above
+function getAttemptState(){ try{ return JSON.parse(localStorage.getItem('niva_pw_attempts')||'{"count":0,"lockedUntil":0}'); }catch(e){ return {count:0,lockedUntil:0}; } }
+function setAttemptState(obj){ localStorage.setItem('niva_pw_attempts', JSON.stringify(obj)); }
+function resetAttempts(){ setAttemptState({count:0,lockedUntil:0}); }
 // ── AUTO-SAVE FILE SYSTEM ─────────────────────────────────────────────────────
 let _autoSaveHandle=null; // FileSystemFileHandle stored in memory per session
 
@@ -15233,6 +14954,343 @@ function saveBillWithSync() {
   }
 }
 
+
+
+// ═══════════════════════════════════════════════════════
+// APPOINTMENTS TAB – Full Dedicated Screen
+// ═══════════════════════════════════════════════════════
+
+function renderApptTabFull(){
+  renderApptStats();
+  showApptSub('today', document.getElementById('appt-sub-btn-today'));
+}
+
+function showApptSub(name, btn){
+  ['today','upcoming','all','add'].forEach(s=>{
+    const p=document.getElementById('appt-sub-'+s);
+    const b=document.getElementById('appt-sub-btn-'+s);
+    if(p) p.classList.toggle('act', s===name);
+    if(b) b.classList.toggle('act', s===name);
+  });
+  if(name==='today') renderApptToday();
+  if(name==='upcoming') renderApptTab();
+  if(name==='all') renderApptAll();
+  if(name==='add'){
+    const dEl=document.getElementById('qa-date');
+    if(dEl&&!dEl.value) dEl.value=tod;
+    const drEl=document.getElementById('qa-doctor');
+    if(drEl&&!drEl.value) drEl.value=CFG.clinic.doctor||'';
+    renderApptRecent();
+  }
+  renderApptStats();
+}
+
+function renderApptStats(){
+  const bar=document.getElementById('appt-stats-bar');
+  if(!bar) return;
+  const now=new Date(); const todStr=(function(){var _ld=new Date();return _ld.getFullYear()+'-'+String(_ld.getMonth()+1).padStart(2,'0')+'-'+String(_ld.getDate()).padStart(2,'0');})();
+  const all=appointments;
+  const todayA=all.filter(a=>a.date===todStr&&a.status==='Scheduled');
+  const upcoming=all.filter(a=>a.status==='Scheduled'&&a.date>todStr);
+  const overdue=all.filter(a=>a.status==='Scheduled'&&a.date<todStr);
+  const done=all.filter(a=>a.status==='Done');
+  const cur=CFG.billing.currency||'₹';
+  bar.innerHTML=`
+    <div class="appt-stat" style="border-left:3px solid #7c3aed"><div class="lb">📅 Today</div><div class="vl" style="color:#7c3aed">${todayA.length}</div></div>
+    <div class="appt-stat" style="border-left:3px solid var(--pri)"><div class="lb">📆 Upcoming</div><div class="vl b">${upcoming.length}</div></div>
+    <div class="appt-stat" style="border-left:3px solid #c0392b"><div class="lb">⚠️ Overdue</div><div class="vl r">${overdue.length}</div></div>
+    <div class="appt-stat" style="border-left:3px solid #1b6e35"><div class="lb">✅ Done</div><div class="vl g">${done.length}</div></div>
+    <div class="appt-stat"><div class="lb">📋 Total</div><div class="vl">${all.length}</div></div>`;
+}
+
+function _fmtApptDate(d){
+  if(!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+}
+function _fmtApptTime(t){
+  if(!t) return '';
+  const [h,m]=t.split(':'); const hr=+h;
+  return (hr%12||12)+':'+m+' '+(hr<12?'AM':'PM');
+}
+
+function _apptCardHTML(a, highlight, extraClass){
+  const cls='appt-card'+(highlight?' today':'')+(extraClass?' '+extraClass:'');
+  return `<div class="${cls}">
+    <div class="appt-card-top">
+      <div class="appt-card-info">
+        <div class="name">👤 ${a.patient}</div>
+        ${a.phone?`<div class="phone">📱 ${a.phone}</div>`:''}
+      </div>
+      <div class="appt-card-date">
+        <div class="date">📅 ${_fmtApptDate(a.date)}</div>
+        ${a.time?`<div class="time">🕐 ${_fmtApptTime(a.time)}</div>`:''}
+      </div>
+    </div>
+    <div class="appt-card-meta">
+      ${a.purpose?`<span>🦷 ${a.purpose}</span>`:''}
+      ${a.doctor?`<span>👨‍⚕️ ${a.doctor}</span>`:''}
+      ${a.notes?`<span style="color:#888;font-style:italic">📝 ${a.notes}</span>`:''}
+      <span class="badge ${a.status==='Done'?'bpd':a.status==='Scheduled'?'bm':'bpn'}">${a.status==='Done'?'Show':a.status}</span>
+    </div>
+    <div class="appt-card-actions">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%">
+        ${a.status!=='Done'?`<button class="btn bg-lt sm vb-action" data-action="dashdone" data-id="${a.id}" style="text-align:center">✓ Show</button>`:`<button class="btn bpd sm" disabled style="text-align:center;opacity:.5">✓ Done</button>`}
+        <button class="btn sm vb-action" data-action="apptcollect" data-id="${a.id}" style="background:#e8f5e9;color:#1b6e35;border:1px solid #a5d6a7;text-align:center">💰 Collect</button>
+        <button class="btn bd-lt sm vb-action" data-action="apptdelete" data-id="${a.id}" style="text-align:center">🗑️ Delete</button>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn bwa-lt sm vb-action" data-action="dashresendwa" data-id="${a.id}">📱 WA</button>
+        <button class="btn bsms-lt sm vb-action" data-action="dashresendsms" data-id="${a.id}">💬 SMS</button>
+        <button class="btn bo sm vb-action" data-action="apptedit" data-id="${a.id}">✏️ Edit</button>
+        ${a.doctor?`<button class="btn sm vb-action" data-action="docremindwa" data-id="${a.id}" style="background:#e8f5ee;color:#1b6e35;border:1px solid #a8d5b8">👨‍⚕️ Dr.WA</button>`:''}
+        ${a.doctor?`<button class="btn sm vb-action" data-action="docremindwasms" data-id="${a.id}" style="background:#e8f0f8;color:#0066cc;border:1px solid #a8c4ee">👨‍⚕️ Dr.SMS</button>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderApptToday(){
+  const el=document.getElementById('appt-today-list');
+  if(!el) return;
+  const todStr=(function(){var _ld=new Date();return _ld.getFullYear()+'-'+String(_ld.getMonth()+1).padStart(2,'0')+'-'+String(_ld.getDate()).padStart(2,'0');})();
+  const todayA=appointments.filter(a=>a.date===todStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+  const overdueA=appointments.filter(a=>a.status==='Scheduled'&&a.date<todStr).sort((a,b)=>b.date.localeCompare(a.date));
+  let html='';
+  if(todayA.length){
+    html+=`<div class="sec" style="color:#7c3aed;border-bottom-color:#7c3aed">📅 Today's Appointments (${todayA.length})</div>`;
+    html+=todayA.map(a=>_apptCardHTML(a,a.status==='Scheduled','')).join('');
+  } else {
+    html+=`<div class="empty" style="margin-bottom:14px">No appointments scheduled for today. <button class="btn bp sm" style="margin-top:8px" onclick="showApptSub('add',document.getElementById('appt-sub-btn-add'))">➕ Book One</button></div>`;
+  }
+  if(overdueA.length){
+    html+=`<div class="sec" style="margin-top:16px;color:#c0392b;border-bottom-color:#c0392b">⚠️ Missed / Overdue (${overdueA.length})</div>`;
+    html+=overdueA.map(a=>_apptCardHTML(a,false,'overdue')).join('');
+  }
+  el.innerHTML=html||'<div class="empty">No appointments today.</div>';
+}
+
+function renderApptTab(){
+  const el=document.getElementById('appt-upcoming-list');
+  if(!el) return;
+  const q=(document.getElementById('appt-search-up')||{value:''}).value.toLowerCase();
+  const fr=(document.getElementById('appt-from')||{value:''}).value;
+  const to=(document.getElementById('appt-to')||{value:''}).value;
+  const st=(document.getElementById('appt-status-filter')||{value:''}).value;
+  const todStr=(function(){var _ld=new Date();return _ld.getFullYear()+'-'+String(_ld.getMonth()+1).padStart(2,'0')+'-'+String(_ld.getDate()).padStart(2,'0');})();
+  let list=appointments.filter(a=>
+    a.date>=todStr &&
+    (!q||(a.patient||'').toLowerCase().includes(q)||(a.phone||'').includes(q)||(a.purpose||'').toLowerCase().includes(q)) &&
+    (!fr||a.date>=fr) && (!to||a.date<=to) &&
+    (!st||a.status===st)
+  ).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''));
+  if(!list.length){el.innerHTML='<div class="empty">No upcoming appointments found.</div>';return;}
+  el.innerHTML=list.map(a=>_apptCardHTML(a,a.date===todStr,'')).join('');
+}
+
+function renderApptAll(){
+  const el=document.getElementById('appt-all-list');
+  if(!el) return;
+  const q=(document.getElementById('appt-search-all')||{value:''}).value.toLowerCase();
+  const st=(document.getElementById('appt-all-status')||{value:''}).value;
+  let list=appointments.filter(a=>
+    (!q||(a.patient||'').toLowerCase().includes(q)||(a.phone||'').includes(q)||(a.purpose||'').toLowerCase().includes(q)) &&
+    (!st||a.status===st)
+  ).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!list.length){el.innerHTML='<div class="empty">No appointments found.</div>';return;}
+  const todStr=(function(){var _ld=new Date();return _ld.getFullYear()+'-'+String(_ld.getMonth()+1).padStart(2,'0')+'-'+String(_ld.getDate()).padStart(2,'0');})();
+  el.innerHTML=list.map(a=>_apptCardHTML(a,a.date===todStr&&a.status==='Scheduled',a.status==='Scheduled'&&a.date<todStr?'overdue':'')).join('');
+}
+
+function renderApptRecent(){
+  const el=document.getElementById('appt-recent-list');
+  if(!el) return;
+  const list=appointments.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if(!list.length){el.innerHTML='<div class="empty">No appointments yet.</div>';return;}
+  const todStr=(function(){var _ld=new Date();return _ld.getFullYear()+'-'+String(_ld.getMonth()+1).padStart(2,'0')+'-'+String(_ld.getDate()).padStart(2,'0');})();
+  el.innerHTML=list.map(a=>_apptCardHTML(a,a.date===todStr&&a.status==='Scheduled','')).join('');
+}
+
+function markApptDoneTab(id){
+  const a=appointments.find(x=>x.id===id);if(!a)return;
+  if(!confirm('Mark appointment for '+a.patient+' as Done?'))return;
+  a.status='Done';a.updatedAt=Date.now();svAppt();fbSyncAppt(a);renderApptTabFull();renderDash();
+  if(typeof renderVB==='function') renderVB();
+}
+
+function deleteApptTab(id){
+  const a=appointments.find(x=>x.id===id);if(!a)return;
+  if(!confirm('Delete appointment for '+a.patient+'?'))return;
+  fbDeleteAppt(id);appointments=appointments.filter(x=>x.id!==id);svAppt();renderApptTabFull();renderDash();
+  if(typeof renderVB==='function') renderVB();
+}
+
+function editApptTab(id){
+  const a=appointments.find(x=>x.id===id);if(!a)return;
+  // Switch to Book New sub-tab and prefill form
+  showApptSub('add', document.getElementById('appt-sub-btn-add'));
+  document.getElementById('qa-patient').value=a.patient||'';
+  document.getElementById('qa-phone').value=a.phone||'';
+  document.getElementById('qa-date').value=a.date||tod;
+  document.getElementById('qa-time').value=a.time||'10:00';
+  document.getElementById('qa-doctor').value=a.doctor||'';
+  document.getElementById('qa-purpose').value=a.purpose||'';
+  document.getElementById('qa-notes').value=a.notes||'';
+  const _qaAddDet=document.getElementById('qa-adddet');if(_qaAddDet)_qaAddDet.value=a.additionalDetail||'';
+  // store id for update
+  document.getElementById('qa-patient').dataset.editId=id;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Patient autocomplete for quick book form
+function apptQuickSearch(val){
+  const box=document.getElementById('qa-suggestions');
+  if(!box) return;
+  if(!val||val.length<2){box.innerHTML='';return;}
+  const q=val.toLowerCase();
+  // Get unique patients from bills
+  const seen=new Set();
+  const matches=bills.filter(b=>(b.patient||'').toLowerCase().includes(q)||((b.phone||'').includes(q))).filter(b=>{
+    if(seen.has(b.patient)) return false; seen.add(b.patient); return true;
+  }).slice(0,6);
+  if(!matches.length){box.innerHTML='';return;}
+  box.innerHTML=`<div style="position:absolute;top:0;left:0;right:0;background:#fff;border:1.5px solid var(--pri);border-top:none;border-radius:0 0 8px 8px;z-index:500;box-shadow:0 6px 16px rgba(13,107,138,.12)">
+    ${matches.map(b=>`<div onclick="apptFillPatient('${b.patient.replace(/'/g,"\\'")}','${(b.phone||'').replace(/'/g,"\\'")}','${(b.doctor||'').replace(/'/g,"\\'")}');document.getElementById('qa-suggestions').innerHTML=''"
+      style="padding:8px 12px;font-size:12px;cursor:pointer;display:flex;justify-content:space-between;border-bottom:1px solid #f0f3f5"
+      onmouseover="this.style.background='#f0f8fc'" onmouseout="this.style.background=''">
+      <span style="font-weight:700">${b.patient}</span>
+      <span style="font-size:11px;color:#aaa">${b.phone||''}</span>
+    </div>`).join('')}
+  </div>`;
+  // position relative on parent
+  box.style.position='relative';
+}
+
+function apptFillPatient(name, phone, doctor){
+  document.getElementById('qa-patient').value=name;
+  if(phone) document.getElementById('qa-phone').value=phone;
+  if(doctor&&!document.getElementById('qa-doctor').value) document.getElementById('qa-doctor').value=doctor;
+  document.getElementById('qa-suggestions').innerHTML='';
+  document.getElementById('qa-date').focus();
+}
+
+function saveQuickAppt(){
+  const patient=(document.getElementById('qa-patient').value||'').trim();
+  const date=document.getElementById('qa-date').value;
+  if(!patient){alert('Enter patient name.');return;}
+  if(!date){alert('Select appointment date.');return;}
+  const editId=document.getElementById('qa-patient').dataset.editId||'';
+  const entry={
+    id: editId||('QA'+Date.now()),
+    billId: '',
+    patient,
+    phone: (document.getElementById('qa-phone').value||'').trim(),
+    date,
+    time: document.getElementById('qa-time').value||'',
+    doctor: (document.getElementById('qa-doctor').value||'').trim()||CFG.clinic.doctor||'',
+    purpose: (document.getElementById('qa-purpose').value||'').trim(),
+    notes: (document.getElementById('qa-notes').value||'').trim(),
+    additionalDetail: (function(){var el=document.getElementById('qa-adddet');return el?el.value.trim():'';})(),
+    status: 'Scheduled',
+    created: Date.now()
+  };
+  if(editId){
+    const idx=appointments.findIndex(x=>x.id===editId);
+    if(idx>=0) appointments[idx]=entry; else appointments.unshift(entry);
+    delete document.getElementById('qa-patient').dataset.editId;
+    alert('✅ Appointment updated for '+patient+'!');
+  } else {
+    appointments.unshift(entry);
+    alert('✅ Appointment saved for '+patient+' on '+_fmtApptDate(date)+'!');
+  }
+  svAppt();
+  fbSyncAppt(entry);
+  clearQuickApptForm();renderApptTabFull();renderDash();
+  if(typeof renderVB==='function') renderVB();
+  showApptSub('today', document.getElementById('appt-sub-btn-today'));
+}
+
+function saveAndSendApptWA(){
+  const patient=(document.getElementById('qa-patient').value||'').trim();
+  const date=document.getElementById('qa-date').value;
+  if(!patient||!date){alert('Enter patient name and date first.');return;}
+  saveQuickAppt();
+  // Find the appointment just saved and send WA
+  const a=appointments[0];
+  if(!a) return;
+  const C=CFG.clinic;
+  const msg=`Dear *${a.patient}*,\n\nYour appointment at *${C.name}*:\n📅 ${_fmtApptDate(a.date)}${a.time?'\n🕐 '+_fmtApptTime(a.time):''}${a.purpose?'\n🦷 '+a.purpose:''}\n\n📍 ${C.addr}\n📞 ${C.phone}\n\nPlease arrive 5 minutes early. Thank you!`;
+  const phone=(a.phone||'').replace(/\D/g,'').replace(/^91/,'').slice(-10);
+  const num=phone?'91'+phone:'';
+  window.open(num?`https://wa.me/${num}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+
+function clearQuickApptForm(){
+  ['qa-patient','qa-phone','qa-time','qa-doctor','qa-purpose','qa-notes','qa-adddet'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.value='';delete el.dataset.editId;}
+  });
+  document.getElementById('qa-date').value=tod;
+  document.getElementById('qa-doctor').value=CFG.clinic.doctor||'';
+  document.getElementById('qa-suggestions').innerHTML='';
+}
+
+// MOBILE / ANDROID HELPER FUNCTIONS
+// ═══════════════════════════════════════════
+
+/* ── Drawer open/close ── */
+function openMobDrawer(){
+  document.getElementById('mob-drawer').classList.add('open');
+  document.getElementById('mob-nav-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMobDrawer(){
+  document.getElementById('mob-drawer').classList.remove('open');
+  document.getElementById('mob-nav-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ── Settings accordion toggle ── */
+function toggleMobSetMenu(btn){
+  const list=document.getElementById('mob-set-list');
+  const isOpen=list.classList.contains('open');
+  list.classList.toggle('open',!isOpen);
+  btn.classList.toggle('open',!isOpen);
+}
+function closeMobSetMenu(){
+  const list=document.getElementById('mob-set-list');
+  const btn=document.querySelector('.mob-set-accordion-btn');
+  if(list)list.classList.remove('open');
+  if(btn)btn.classList.remove('open');
+}
+
+/* ── Reports accordion toggle ── */
+function toggleMobRepMenu(btn){
+  const list=document.getElementById('mob-rep-list');
+  const isOpen=list.classList.contains('open');
+  list.classList.toggle('open',!isOpen);
+  btn.classList.toggle('open',!isOpen);
+}
+function closeMobRepMenu(){
+  const list=document.getElementById('mob-rep-list');
+  const btn=document.querySelector('.mob-rep-accordion-btn');
+  if(list)list.classList.remove('open');
+  if(btn)btn.classList.remove('open');
+}
+
+/* ── Swipe-to-close drawer ── */
+(function swipeDrawer(){
+  let startX=0,startY=0;
+  document.addEventListener('DOMContentLoaded',function(){
+    const drawer=document.getElementById('mob-drawer');
+    if(!drawer)return;
+    drawer.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;startY=e.touches[0].clientY;},{passive:true});
+    drawer.addEventListener('touchend',function(e){
+      const dx=e.changedTouches[0].clientX-startX;
+      const dy=Math.abs(e.changedTouches[0].clientY-startY);
+      if(dx<-60&&dy<40)closeMobDrawer();
+    },{passive:true});
+  });
+})();
 
 // ═══════════════════════════════════════════
 // APPOINTMENTS TAB – FULL MODULE
@@ -17510,13 +17568,7 @@ window.addEventListener('load', function(){
         var b=bills.find(function(x){return (x.id||'').trim()===_vid;});
         if(!b) b=bills.find(function(x){return (x.id||'').trim().toLowerCase()===_vid.toLowerCase();});
         if(!b){
-          // Try pulling from Supabase/Firebase if not found locally
-          if(typeof window.sbPullTable==='function'){
-            window.sbPullTable('niva_bills','bills').then(function(){
-              var b2=bills.find(function(x){return (x.id||'').trim().toLowerCase()===_vid.toLowerCase();});
-              if(b2) openBill(b2); else alert('Bill not found: '+_vid);
-            }).catch(function(){ alert('Bill not found: '+_vid); });
-          } else { alert('Bill not found: '+_vid); }
+          alert('Bill not found: '+_vid);
           return;
         }
         openBill(b);
@@ -18082,7 +18134,7 @@ function svPF(){
 }
 
 // ── Deleted Patient IDs Blocklist ─────────────────────────────
-// IDs added here are NEVER restored by Firebase/Supabase pull/poll.
+// IDs added here are NEVER restored by Firebase pull/poll.
 // Persisted in localStorage so it survives page reload.
 var _pfDeletedIds = (function(){
   try{ return new Set(JSON.parse(localStorage.getItem('niva_pf_deleted_ids')||'[]')); }
@@ -18339,7 +18391,7 @@ function pfRemoveDupAllPatients(){
 window._pfPendingMergeGroups = []; // [{keep, drops:[], reason:'auto'|'select'}]
 window._pfMergeDecisions = {};     // groupIdx → 'merge'|'skip' | 'select:<id>'
 
-// Main entry point — call this after any pull (Firebase or Supabase)
+// Main entry point — call this after any pull (Firebase)
 function pfSmartMergeAfterPull(){
   pfDeduplicateTreatments();
   var groups = pfFindDuplicateGroups();
@@ -20037,15 +20089,7 @@ function sendDoctorReminderSMSById(id){
 (function(){ populateAllDoctorDropdowns(); populateApptDoctorDropdown(); })();
 </script>
 
-<script>
-if('serviceWorker' in navigator && location.protocol === 'https:'){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('sw.js')
-      .then(function(reg){ console.log('[PWA] SW registered:', reg.scope); })
-      .catch(function(e){ console.warn('[PWA] SW failed:', e); });
-  });
-}
-</script>
+
 
 <script>
 /* ── Mobile layout fix: override inline grid styles on small screens ── */
@@ -20117,7 +20161,7 @@ function qFlush(){
 }
 
 // Intercept Firebase sync functions — wrap with offline queue
-// NO function wrapping — avoids triple-wrap corruption with Supabase hooks
+// NO function wrapping — avoids triple-wrap corruption
 // Offline queue is used only by qFlush on reconnect
 // Sync functions call qAdd directly when offline (handled in sv/svAppt etc.)
 
@@ -20140,7 +20184,7 @@ window._nivaQueueFlush = qFlush;
 console.log('[NivaQ] Offline queue ready.');
 
 
-// ── 2. Logo auto-sync to Firebase + Supabase when logo changes ───────────────
+// ── 2. Logo auto-sync to Firebase when logo changes ───────────────────────────
 var _origSaveSettings = window.saveSettings;
 window.saveSettings = function(s){
   if(typeof _origSaveSettings==='function') _origSaveSettings(s);
@@ -20155,10 +20199,6 @@ window.saveSettings = function(s){
       if(typeof window.fbSyncClinic==='function'){
         try{ window.fbSyncClinic(); }catch(e){}
       }
-      // Sync logo to Supabase
-      if(typeof window.sbPushLogo==='function'){
-        try{ window.sbPushLogo(null); }catch(e){}
-      }
     }, 200);
   }
 };
@@ -20169,7 +20209,6 @@ var _logoSettingsFields = ['pos','size','tbSize','radius','printSize'];
 window._syncLogoSettings = function(){
   setTimeout(function(){
     if(typeof window.fbSyncClinic==='function') try{ window.fbSyncClinic(); }catch(e){}
-    if(typeof window.sbSyncClinic==='function') try{ window.sbSyncClinic(); }catch(e){}
   }, 300);
 };
 
@@ -20198,878 +20237,7 @@ setTimeout(_updateOfflineIndicator, 2000);
 })();
 </script>
 
-</body>
-</html>
-
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  SUPABASE DUAL SYNC  —  Niva Dental v7
-//  Runs silently alongside Firebase as a secondary backup
-// ═══════════════════════════════════════════════════════════════
-
-var _SB_CFG_KEY = 'niva_supabase_cfg';
-
-function sbGetConfig(){
-  try{ return JSON.parse(localStorage.getItem(_SB_CFG_KEY)||'{}'); }catch(e){ return {}; }
-}
-function sbSaveConfig(){
-  var url    = (document.getElementById('sb-url')||{}).value||'';
-  var key    = (document.getElementById('sb-key')||{}).value||'';
-  var secret = (document.getElementById('sb-secret')||{}).value||'';
-  var cfg = sbGetConfig();
-  cfg.url    = url.trim().replace(/\/$/,'');
-  cfg.key    = key.trim();
-  cfg.secret = secret.trim();
-  localStorage.setItem(_SB_CFG_KEY, JSON.stringify(cfg));
-  sbSetStatus(cfg.url && cfg.key ? 'configured' : 'empty');
-}
-// ── Update secret key in Supabase function automatically ──────
-function sbUpdateSecretKey(){
-  var cfg = sbGetConfig();
-  if(!cfg.url || !cfg.key){
-    alert('Please enter Supabase URL and Anon Key first.');
-    return;
-  }
-  var secret = cfg.secret || '';
-  if(!secret){
-    alert('Please enter a Security Secret Key first.');
-    return;
-  }
-  var msg = document.getElementById('sb-test-msg');
-  var btn = document.getElementById('sb-update-secret-btn');
-  if(msg){ msg.style.display='block'; msg.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim(); msg.textContent='🔄 Updating secret key in Supabase…'; }
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Updating…'; }
-
-  // Use Supabase RPC to update the function with new secret
-  // We call a special SQL via the management endpoint isn't available on anon key
-  // Instead we use pg_function update via rpc if available, else show SQL to copy
-  var escapedSecret = secret.replace(/'/g, "''"); // escape single quotes
-  var sql = "create or replace function niva_check_key(req_key text) returns boolean language sql security definer as $$ select req_key = '" + escapedSecret + "' $$;";
-
-  // Try via Supabase REST rpc (needs service_role) — fallback to show SQL
-  fetch(cfg.url + '/rest/v1/rpc/niva_update_secret', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': cfg.key,
-      'Authorization': 'Bearer ' + cfg.key,
-      'x-niva-key': secret
-    },
-    body: JSON.stringify({ new_secret: secret })
-  })
-  .then(function(r){
-    if(r.ok || r.status===200 || r.status===204){
-      if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Secret key updated in Supabase! Click Test Connection to verify.'; }
-    } else {
-      throw new Error('rpc_not_found');
-    }
-  })
-  .catch(function(){
-    // Fallback: show SQL to copy-paste
-    if(msg){
-      msg.style.color='#7a5c00';
-      msg.innerHTML = '📋 Copy this SQL and run it in Supabase SQL Editor:'
-        + '<br><textarea style="width:100%;margin-top:6px;font-size:11px;font-family:monospace;background:#f8fafc;border:1px solid #e0e8ee;border-radius:6px;padding:8px;resize:vertical;min-height:60px" onclick="this.select()" readonly>'
-        + sql
-        + '</textarea>';
-    }
-  })
-  .finally(function(){
-    if(btn){ btn.disabled=false; btn.textContent='🔑 Update Secret in Supabase'; }
-  });
-}
-
-function sbLoadConfigToUI(){
-  var cfg = sbGetConfig();
-  var u = document.getElementById('sb-url');
-  var k = document.getElementById('sb-key');
-  var s = document.getElementById('sb-secret');
-  if(u) u.value = cfg.url||'';
-  if(k) k.value = cfg.key||'';
-  if(s) s.value = cfg.secret||'';
-  sbSetStatus(cfg.url && cfg.key ? 'configured' : 'empty');
-}
-function sbSetStatus(state, msg){
-  var dot = document.getElementById('sb-dot');
-  var lbl = document.getElementById('sb-status-msg');
-  if(!dot||!lbl) return;
-  var map = {
-    empty:      ['#ccc',  '#888',    'Not configured'],
-    configured: ['#f39c12','#7a5c00','Config saved — not tested yet'],
-    ok:         ['#1b6e35','#1b6e35','✅ Connected to Supabase'],
-    error:      ['#c0392b','#c0392b', msg||'Connection failed'],
-    syncing:    ['var(--pri)','var(--pri)','🔄 Syncing…']
-  };
-  var v = map[state]||map.empty;
-  dot.style.background = v[0];
-  lbl.style.color = v[1];
-  lbl.textContent = msg||v[2];
-  // Update topbar SB indicator
-  var tbDot = document.getElementById('tb-sb-dot');
-  var tbLbl = document.getElementById('tb-sb-label');
-  if(tbDot) tbDot.style.background = v[0];
-  if(tbLbl) tbLbl.textContent = state==='ok' ? '🟢 Live' : state==='syncing' ? '🔄 Sync' : state==='error' ? '❌ Err' : state==='configured' ? '⚡ Ready' : 'Supabase';
-}
-
-// ── HTTP helpers ──────────────────────────────────────────────
-function sbFetch(path, method, body){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key) return Promise.reject(new Error('Supabase not configured'));
-  var secret = cfg.secret || '';
-  var opts = {
-    method: method||'GET',
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        cfg.key,
-      'Authorization': 'Bearer ' + cfg.key,
-      'x-niva-key':   secret,
-      'Prefer':        method==='POST' ? 'resolution=merge-duplicates,return=minimal' : (method==='DELETE' ? 'return=minimal' : '')
-    }
-  };
-  if(body) opts.body = JSON.stringify(body);
-  return fetch(cfg.url + '/rest/v1/' + path, opts)
-    .then(function(r){
-      // 204 No Content, 201 Created, or any successful POST/DELETE with return=minimal
-      // returns an empty body — do NOT call .json() on it
-      if(r.status===204||r.status===201) return {};
-      if(!r.ok) return r.text().then(function(t){ throw new Error(t||('HTTP '+r.status)); });
-      // For POST/DELETE with return=minimal, Supabase may return 200 with empty body
-      if((method==='POST'||method==='DELETE') && r.status===200){
-        return r.text().then(function(t){
-          if(!t||!t.trim()) return {};
-          try{ return JSON.parse(t); }catch(e){ return {}; }
-        });
-      }
-      return r.json();
-    });
-}
-
-// ── Ensure tables exist (called on first test) ─────────────────
-function sbEnsureTables(){
-  // Supabase REST cannot CREATE tables — user must do it once in SQL editor
-  // We just do a lightweight GET to check table exists
-  return sbFetch('niva_bills?limit=1','GET')
-    .then(function(){ return sbFetch('niva_appointments?limit=1','GET'); })
-    .then(function(){ return sbFetch('niva_expenses?limit=1','GET'); })
-    .then(function(){ return sbFetch('niva_patient_files?limit=1','GET'); })
-    .then(function(){ return sbFetch('niva_settings?limit=1','GET'); });
-}
-
-// ── Upsert single record ───────────────────────────────────────
-function sbUpsert(table, record){
-  if(!record||!record.id) return Promise.resolve();
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key) return Promise.resolve();
-  var row = { id: record.id, data: JSON.stringify(record), updated_at: new Date().toISOString() };
-  // Flash topbar indicator
-  var tbDot = document.getElementById('tb-sb-dot');
-  var tbLbl = document.getElementById('tb-sb-label');
-  if(tbDot){ tbDot.style.background='var(--pri)'; }
-  if(tbLbl){ tbLbl.textContent='🔄 Sync'; }
-  return sbFetch(table + '?on_conflict=id', 'POST', [row])
-    .then(function(r){
-      if(tbDot){ tbDot.style.background='#1b6e35'; tbDot.style.boxShadow='0 0 0 3px rgba(27,110,53,.3)'; }
-      if(tbLbl){ tbLbl.textContent='🟢 Live'; }
-      if(window._sbFlashTimer) clearTimeout(window._sbFlashTimer);
-      window._sbFlashTimer = setTimeout(function(){
-        if(tbDot){ tbDot.style.background='#1b6e35'; tbDot.style.boxShadow=''; }
-        if(tbLbl){ tbLbl.textContent='🟢 Live'; }
-      }, 2000);
-      return r;
-    })
-    .catch(function(e){
-      if(tbDot){ tbDot.style.background='#c0392b'; }
-      if(tbLbl){ tbLbl.textContent='❌ Err'; }
-      console.warn('[SB] upsert '+table+':', e.message);
-    });
-}
-
-// ── Delete single record ───────────────────────────────────────
-function sbDelete(table, id){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key) return Promise.resolve();
-  return sbFetch(table + '?id=eq.' + encodeURIComponent(id), 'DELETE')
-    .catch(function(e){ console.warn('[SB] delete '+table+':', e.message); });
-}
-
-// ── Public sync functions (mirroring Firebase pattern) ─────────
-window.sbSyncBill    = function(b){ return sbUpsert('niva_bills', b); };
-window.sbSyncAppt    = function(a){ return sbUpsert('niva_appointments', a); };
-window.sbSyncExp     = function(e){ return sbUpsert('niva_expenses', e); };
-window.sbSyncPF      = function(p){ return sbUpsert('niva_patient_files', p); };
-window.sbDeleteBill  = function(id){ return sbDelete('niva_bills', id); };
-window.sbDeleteAppt  = function(id){ return sbDelete('niva_appointments', id); };
-
-// ── Supabase: Push clinic info + logo ─────────────────────────
-// Stores clinic settings (name, address, doctor, billing, theme) and logo
-// into a single row in niva_clinic_settings table (id='main').
-// CREATE TABLE if not done yet (SQL to run once in Supabase SQL editor):
-//   create table if not exists niva_clinic_settings (
-//     id text primary key,
-//     data jsonb,
-//     updated_at timestamptz default now()
-//   );
-window.sbSyncClinic = function(){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key) return Promise.resolve();
-  var payload = {
-    clinic:    (typeof CFG!=='undefined' && CFG.clinic)  ? CFG.clinic  : {},
-    billing:   (typeof CFG!=='undefined' && CFG.billing) ? CFG.billing : {},
-    theme:     (typeof CFG!=='undefined' && CFG.theme)   ? CFG.theme   : {},
-    updatedAt: Date.now()
-  };
-  var row = { id:'main', data: JSON.stringify(payload), updated_at: new Date().toISOString() };
-  return sbFetch('niva_settings?on_conflict=id','POST',[row])
-    .then(function(){ console.log('[SB] clinic settings synced'); })
-    .catch(function(e){ console.warn('[SB] sbSyncClinic:', e.message); });
-};
-
-window.sbPushLogo = function(msgEl){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){
-    if(msgEl){ msgEl.style.display='block'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ Supabase not configured.'; }
-    return;
-  }
-  var logoData = (typeof CFG!=='undefined' && CFG.logo && CFG.logo.data) ? CFG.logo.data : '';
-  if(!logoData){
-    // Also check localStorage directly
-    try{ logoData = localStorage.getItem('niva_logo')||''; }catch(e){}
-  }
-  if(!logoData){
-    if(msgEl){ msgEl.style.display='block'; msgEl.style.color='#888'; msgEl.textContent='ℹ️ No logo uploaded yet.'; }
-    return;
-  }
-  if(msgEl){ msgEl.style.display='block'; msgEl.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim()||'#0d6b8a'; msgEl.textContent='🔄 Pushing logo…'; }
-  var logoPayload = {
-    data:      logoData,
-    pos:       (typeof CFG!=='undefined' && CFG.logo && CFG.logo.pos)  ? CFG.logo.pos  : 'center',
-    size:      (typeof CFG!=='undefined' && CFG.logo && CFG.logo.size) ? CFG.logo.size : 80,
-    updatedAt: Date.now()
-  };
-  var row = { id:'logo', data: JSON.stringify(logoPayload), updated_at: new Date().toISOString() };
-  sbFetch('niva_settings?on_conflict=id','POST',[row])
-    .then(function(){
-      if(msgEl){ msgEl.style.color='#1b6e35'; msgEl.textContent='✅ Logo pushed to Supabase!'; }
-    })
-    .catch(function(e){
-      if(msgEl){ msgEl.style.color='#c0392b'; msgEl.textContent='❌ Logo push failed: '+e.message; }
-    });
-};
-
-// ── Supabase: Pull logo from niva_clinic_settings ──────────────
-window.sbPullLogo = function(msgEl){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){
-    if(msgEl){ msgEl.style.display='block'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ Supabase not configured.'; }
-    return;
-  }
-  if(msgEl){ msgEl.style.display='block'; msgEl.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim()||'#0d6b8a'; msgEl.textContent='🔄 Pulling logo…'; }
-  sbFetch('niva_settings?id=eq.logo','GET')
-    .then(function(rows){
-      if(!rows||!rows.length){ throw new Error('No logo found in Supabase'); }
-      var payload = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
-      if(!payload||!payload.data){ throw new Error('Logo data empty'); }
-      // Apply to CFG and localStorage
-      if(typeof CFG !== 'undefined'){
-        CFG.logo = CFG.logo||{};
-        CFG.logo.data = payload.data;
-        if(payload.pos)  CFG.logo.pos  = payload.pos;
-        if(payload.size) CFG.logo.size = payload.size;
-      }
-      try{ localStorage.setItem('niva_logo', payload.data); }catch(e){}
-      // Refresh logo preview if function exists
-      if(typeof window.renderLogoPreview === 'function') window.renderLogoPreview();
-      if(typeof window.updateTopbarLogo  === 'function') window.updateTopbarLogo();
-      if(msgEl){ msgEl.style.color='#1b6e35'; msgEl.textContent='✅ Logo pulled from Supabase!'; }
-    })
-    .catch(function(e){
-      if(msgEl){ msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+e.message; }
-    });
-};
-
-// ── Supabase: Pull clinic info from niva_clinic_settings ───────
-window.sbPullClinic = function(msgEl){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){
-    if(msgEl){ msgEl.style.display='block'; msgEl.style.color='#c0392b'; msgEl.textContent='❌ Supabase not configured.'; }
-    return;
-  }
-  if(msgEl){ msgEl.style.display='block'; msgEl.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim()||'#0d6b8a'; msgEl.textContent='🔄 Pulling clinic info…'; }
-  sbFetch('niva_settings?id=eq.main','GET')
-    .then(function(rows){
-      if(!rows||!rows.length){ throw new Error('No clinic info found in Supabase'); }
-      var payload = typeof rows[0].data === 'string' ? JSON.parse(rows[0].data) : rows[0].data;
-      if(!payload){ throw new Error('Clinic data empty'); }
-      if(typeof CFG !== 'undefined'){
-        if(payload.clinic)  Object.assign(CFG.clinic  = CFG.clinic||{},  payload.clinic);
-        if(payload.billing) Object.assign(CFG.billing = CFG.billing||{}, payload.billing);
-        if(payload.theme)   Object.assign(CFG.theme   = CFG.theme||{},   payload.theme);
-      }
-      // Persist to localStorage
-      try{
-        var saved = JSON.parse(localStorage.getItem('niva_settings')||'{}');
-        if(payload.clinic)  saved.clinic  = payload.clinic;
-        if(payload.billing) saved.billing = payload.billing;
-        if(payload.theme)   saved.theme   = payload.theme;
-        localStorage.setItem('niva_settings', JSON.stringify(saved));
-      }catch(e){}
-      // Refresh UI if function exists
-      if(typeof window.loadClinicForm    === 'function') window.loadClinicForm();
-      if(typeof window.applyTheme        === 'function') window.applyTheme();
-      if(typeof window.updateTopbar      === 'function') window.updateTopbar();
-      if(msgEl){ msgEl.style.color='#1b6e35'; msgEl.textContent='✅ Clinic info pulled from Supabase!'; }
-    })
-    .catch(function(e){
-      if(msgEl){ msgEl.style.color='#c0392b'; msgEl.textContent='❌ '+e.message; }
-    });
-};
-
-// ── Test connection button ─────────────────────────────────────
-window.sbTestConnection = function(){
-  var msg = document.getElementById('sb-test-msg');
-  if(msg){ msg.style.display='block'; msg.style.color='#7a5c00'; msg.textContent='🔄 Testing…'; }
-  sbSetStatus('syncing');
-  sbEnsureTables()
-    .then(function(){
-      sbSetStatus('ok');
-      if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Connected! Tables found. Supabase sync is active.'; }
-    })
-    .catch(function(e){
-      sbSetStatus('error', '❌ '+e.message);
-      if(msg){
-        msg.style.color='#c0392b';
-        // Guide user to create tables
-        if(e.message.indexOf('niva_bills')>-1 || e.message.indexOf('42P01')>-1 || e.message.indexOf('does not exist')>-1){
-          msg.innerHTML = '❌ Tables not found. <b>Run the SQL below in Supabase SQL Editor:</b><br><br>'
-            + '<textarea style="width:100%;font-size:10px;font-family:monospace;background:#f8fafc;border:1px solid #e0e8ee;border-radius:6px;padding:8px;resize:vertical;min-height:120px" readonly>'
-            + sbCreateTableSQL()
-            + '</textarea>';
-        } else {
-          msg.textContent = '❌ ' + e.message;
-        }
-      }
-    });
-};
-
-function sbCreateTableSQL(){
-  var secret = (sbGetConfig().secret||'').trim() || 'CHANGE_ME_STRONG_SECRET';
-  var tables = ['niva_bills','niva_appointments','niva_expenses','niva_patient_files','niva_settings'];
-  var L = [];
-  L.push('-- ════════════════════════════════════════════');
-  L.push('-- NIVA DENTAL — Supabase Setup SQL (auto-generated)');
-  L.push('-- Run ONCE in Supabase Dashboard → SQL Editor');
-  L.push('-- ════════════════════════════════════════════');
-  L.push('');
-  L.push('-- Step 1: Store secret key in DB (not in code)');
-  L.push("alter database postgres set app.niva_secret_key = '" + secret + "';");
-  L.push('');
-  L.push('-- Step 2: Key-check function');
-  L.push('create or replace function niva_check_key(req_key text)');
-  L.push('returns boolean language sql security definer as $$');
-  L.push("  select req_key = current_setting('app.niva_secret_key', true)");
-  L.push('$$;');
-  L.push('');
-  L.push('-- Step 3: Create tables');
-  tables.forEach(function(t){
-    L.push('create table if not exists ' + t + ' (id text primary key, data jsonb, updated_at timestamptz default now());');
-  });
-  L.push('');
-  L.push('-- Step 4: Enable Row Level Security');
-  tables.forEach(function(t){ L.push('alter table ' + t + ' enable row level security;'); });
-  L.push('');
-  L.push('-- Step 5: Secure policies (only x-niva-key header passes)');
-  tables.forEach(function(t){
-    ['anon_all','secure_read','secure_write','secure_update','secure_delete'].forEach(function(p){
-      L.push('drop policy if exists "' + p + '" on ' + t + ';');
-    });
-    var hdr = "current_setting('request.headers',true)::json->>'x-niva-key'";
-    L.push('create policy "secure_read"   on '+t+' for select using      (niva_check_key('+hdr+'));');
-    L.push('create policy "secure_write"  on '+t+' for insert with check (niva_check_key('+hdr+'));');
-    L.push('create policy "secure_update" on '+t+' for update using      (niva_check_key('+hdr+'));');
-    L.push('create policy "secure_delete" on '+t+' for delete using      (niva_check_key('+hdr+'));');
-    L.push('');
-  });
-  L.push('-- Optional: Helper RPC for auto key update from app');
-  L.push('create or replace function niva_update_secret(new_secret text)');
-  L.push('returns void language sql security definer as $$');
-  L.push("  select pg_catalog.set_config('app.niva_secret_key', new_secret, false)");
-  L.push('$$;');
-  L.push('');
-  L.push('-- Verify');
-  L.push("select tablename, policyname, cmd from pg_policies where tablename like 'niva_%' order by tablename, cmd;");
-  return L.join('\n');
-}
-
-// ── Full sync all local data → Supabase ───────────────────────
-window.sbFullSync = function(){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){
-    alert('Please enter Supabase URL and Key first.');
-    return;
-  }
-  var msg = document.getElementById('sb-test-msg');
-  if(msg){ msg.style.display='block'; msg.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim(); msg.textContent='🔄 Syncing all data to Supabase…'; }
-  sbSetStatus('syncing');
-
-  var billRows  = (window.bills||[]).filter(Boolean).map(function(b){ return {id:b.id,data:JSON.stringify(b),updated_at:new Date().toISOString()}; });
-  var apptRows  = (window.appointments||[]).filter(Boolean).map(function(a){ return {id:a.id,data:JSON.stringify(a),updated_at:new Date().toISOString()}; });
-  var expRows   = (window.expenses||[]).filter(Boolean).map(function(e){ return {id:e.id,data:JSON.stringify(e),updated_at:new Date().toISOString()}; });
-  var pfRows    = (window.patientFiles||[]).filter(Boolean).map(function(p){ return {id:p.id,data:JSON.stringify(p),updated_at:new Date().toISOString()}; });
-
-  function batchUpsert(table, rows){
-    if(!rows.length) return Promise.resolve();
-    // Send in chunks of 100
-    var chunks = [];
-    for(var i=0;i<rows.length;i+=100) chunks.push(rows.slice(i,i+100));
-    return chunks.reduce(function(p,chunk){ return p.then(function(){ return sbFetch(table+'?on_conflict=id','POST',chunk); }); }, Promise.resolve());
-  }
-
-  Promise.all([
-    batchUpsert('niva_bills', billRows),
-    batchUpsert('niva_appointments', apptRows),
-    batchUpsert('niva_expenses', expRows),
-    batchUpsert('niva_patient_files', pfRows)
-  ])
-  .then(function(){
-    sbSetStatus('ok');
-    var total = billRows.length + apptRows.length + expRows.length + pfRows.length;
-    if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Synced ' + total + ' records to Supabase successfully!'; }
-  })
-  .catch(function(e){
-    sbSetStatus('error','❌ Sync failed: '+e.message);
-    if(msg){ msg.style.color='#c0392b'; msg.textContent='❌ Sync failed: '+e.message; }
-  });
-};
-
-// ── Hook into existing save functions for auto dual-sync ───────
-// Runs after window load to ensure all original functions are defined
-function _sbHookSyncFunctions(){
-  // Wrap fbSyncBill
-  var _origFbSyncBill = window.fbSyncBill;
-  window.fbSyncBill = function(b){
-    if(typeof _origFbSyncBill==='function') _origFbSyncBill(b);
-    window.sbSyncBill(b);
-  };
-  // Wrap fbSyncAppt
-  var _origFbSyncAppt = window.fbSyncAppt;
-  window.fbSyncAppt = function(a){
-    if(typeof _origFbSyncAppt==='function') _origFbSyncAppt(a);
-    window.sbSyncAppt(a);
-  };
-  // Wrap fbSyncExp
-  var _origFbSyncExp = window.fbSyncExp;
-  window.fbSyncExp = function(e){
-    if(typeof _origFbSyncExp==='function') _origFbSyncExp(e);
-    window.sbSyncExp(e);
-  };
-  // Wrap fbSyncPF — patient files sync to Firebase only, not Supabase
-  var _origFbSyncPF = window.fbSyncPF;
-  window.fbSyncPF = function(p){
-    if(typeof _origFbSyncPF==='function') _origFbSyncPF(p);
-  };
-  // Wrap fbDeleteAppt
-  var _origFbDeleteAppt = window.fbDeleteAppt;
-  window.fbDeleteAppt = function(id){
-    if(typeof _origFbDeleteAppt==='function') _origFbDeleteAppt(id);
-    window.sbDeleteAppt(id);
-  };
-  console.log('[NivaSB] Sync hooks attached');
-}
-// Attach hooks as early as possible, retry until functions are available
-(function(){
-  var _attempts = 0;
-  function _tryHook(){
-    _attempts++;
-    if(typeof window.fbSyncBill === 'function'){
-      _sbHookSyncFunctions();
-    } else if(_attempts < 20){
-      setTimeout(_tryHook, 300);
-    } else {
-      console.warn('[NivaSB] Could not hook fbSyncBill after '+_attempts+' attempts');
-    }
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', _tryHook);
-  } else {
-    _tryHook();
-  }
-})();
-
-// ── Load config into UI when Settings → Supabase is opened ─────
-var _origShowSetSection2 = window.showSetSection;
-window.showSetSection = function(id, btn){
-  if(typeof _origShowSetSection2==='function') _origShowSetSection2(id, btn);
-  if(id==='supabase') setTimeout(sbLoadConfigToUI, 10);
-};
-
-console.log('[NivaSB] Supabase dual sync loaded');
-
-// ── Auto-load config on page start ────────────────────────────
-(function(){
-  function _sbInitOnReady(){
-    var cfg = sbGetConfig();
-    // Populate fields if they exist in DOM already
-    var u = document.getElementById('sb-url');
-    var k = document.getElementById('sb-key');
-    var s = document.getElementById('sb-secret');
-    if(u && cfg.url) u.value = cfg.url;
-    if(k && cfg.key) k.value = cfg.key;
-    if(s) s.value = cfg.secret || '';
-    // No default secret — user must set their own
-    // Set status indicator
-    sbSetStatus(cfg.url && cfg.key ? 'configured' : 'empty');
-  }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', _sbInitOnReady);
-  } else {
-    _sbInitOnReady();
-  }
-})();
-
-// ── Auto-pull on page load (restore latest data from Supabase) ─
-(function(){
-  function _sbAutoPullOnLoad(){
-    var cfg = sbGetConfig();
-    if(!cfg.url || !cfg.key) return; // Not configured, skip
-    console.log('[NivaSB] Auto-pulling latest data from Supabase on startup…');
-    sbSetStatus('syncing');
-    // Pass skipRender=true — render once after all 4 tables complete
-    Promise.all([
-      window.sbPullTable ? window.sbPullTable('niva_bills','bills',true) : Promise.resolve(),
-      window.sbPullTable ? window.sbPullTable('niva_appointments','appointments',true) : Promise.resolve(),
-      window.sbPullTable ? window.sbPullTable('niva_expenses','expenses',true) : Promise.resolve()
-    ]).then(function(){
-      sbSetStatus('ok');
-      console.log('[NivaSB] Startup pull complete');
-      if(typeof renderAll==='function') renderAll();
-      if(typeof renderDash==='function') renderDash();
-    }).catch(function(e){
-      sbSetStatus('error','❌ '+e.message);
-      console.warn('[NivaSB] Startup pull failed:', e.message);
-    });
-  }
-  // Wait 3 seconds after load so all local data is initialized first
-  window.addEventListener('load', function(){
-    setTimeout(_sbAutoPullOnLoad, 3000);
-  });
-})();
-
-// ── Supabase Realtime Polling (every 30 seconds) ───────────────
-// Supabase free tier doesn't always have WebSocket realtime enabled.
-// We poll every 30s and merge any new/updated records silently.
-(function(){
-  var _lastPollTime = {};  // table -> ISO timestamp of last poll
-  var _POLL_INTERVAL = 30000; // 30 seconds
-  // Capture page-load time; used as the baseline for the first poll so it
-  // does not overlap with the startup auto-pull that runs at t+3s.
-  var _sbPageLoadTime = Date.now();
-
-  function _sbPollTable(table, localKey, globalKey){
-    var cfg = sbGetConfig();
-    if(!cfg.url || !cfg.key) return Promise.resolve();
-
-    // Only fetch records updated after our last poll.
-    // On first poll use the page-load timestamp so we don't re-fetch
-    // data that the startup auto-pull (which runs at t+3s) already pulled.
-    var since = _lastPollTime[table] || new Date(_sbPageLoadTime).toISOString();
-    var path = table + '?select=id,data,updated_at&updated_at=gt.' + encodeURIComponent(since) + '&order=updated_at.asc&limit=500';
-    _lastPollTime[table] = new Date().toISOString();
-
-    return sbFetch(path, 'GET')
-      .then(function(rows){
-        if(!Array.isArray(rows) || !rows.length) return; // No changes
-
-        var remote = rows.map(function(r){
-          try{ return typeof r.data==='string' ? JSON.parse(r.data) : r.data; }
-          catch(e){ return null; }
-        }).filter(Boolean);
-
-        if(!remote.length) return;
-
-        // Merge: remote wins if newer updatedAt
-        var localArr = window[globalKey] || [];
-        var map = {};
-        localArr.forEach(function(r){ if(r&&r.id) map[r.id]=r; });
-        var changed = false;
-        remote.forEach(function(r){
-          if(!r||!r.id) return;
-          // ── BLOCKLIST CHECK: skip deleted patient IDs ──
-          if(localKey==='patientFiles' && typeof pfIsDeleted==='function' && pfIsDeleted(r.id)) return;
-          // ── SAME-NAME CHECK: if same-name patient already local, update that entry instead of adding new ──
-          var existing = map[r.id];
-          if(!existing && localKey==='patientFiles' && typeof pfNormName==='function'){
-            var rNorm = pfNormName(r.name||'');
-            if(rNorm){
-              var sameNameKey = Object.keys(map).find(function(k){ return typeof pfNormName==='function' && pfNormName((map[k]&&map[k].name)||'')===rNorm; });
-              if(sameNameKey) existing = map[sameNameKey];
-            }
-          }
-          if(!existing || (r.updatedAt||0) >= (existing.updatedAt||0)){
-            map[r.id] = r;
-            changed = true;
-          }
-        });
-
-        if(!changed) return;
-        var merged = Object.values(map);
-        window[globalKey] = merged;
-
-        // Save to localStorage + IDB
-        var lsKey = localKey==='bills' ? 'niva_dental_v3' : localKey==='appointments' ? 'niva_appointments' : localKey==='expenses' ? 'niva_expenses' : 'niva_patient_files';
-        try{ localStorage.setItem(lsKey, JSON.stringify(merged)); }catch(e){}
-        var idbKey = localKey==='patientFiles' ? 'patient_files' : localKey;
-        try{ if(typeof idbSaveAll==='function') idbSaveAll(idbKey, merged); }catch(e){}
-
-        console.log('[NivaSB] Realtime poll: '+remote.length+' new/updated in '+table);
-
-        // Flash indicator
-        var tbDot = document.getElementById('tb-sb-dot');
-        var tbLbl = document.getElementById('tb-sb-label');
-        if(tbDot){ tbDot.style.background='#1b6e35'; tbDot.style.boxShadow='0 0 0 4px rgba(27,110,53,.3)'; }
-        if(tbLbl){ tbLbl.textContent='🔄 Updated'; }
-        setTimeout(function(){
-          if(tbDot){ tbDot.style.boxShadow=''; }
-          if(tbLbl){ tbLbl.textContent='🟢 Live'; }
-        }, 2000);
-
-        // Re-render UI
-        if(typeof renderAll==='function') renderAll();
-        if(typeof renderDash==='function') renderDash();
-      })
-      .catch(function(e){
-        console.warn('[NivaSB] Poll error '+table+':', e.message);
-      });
-  }
-
-  function _sbPollAll(){
-    var cfg = sbGetConfig();
-    if(!cfg.url || !cfg.key) return; // Not configured
-    _sbPollTable('niva_bills',        'bills',        'bills');
-    _sbPollTable('niva_appointments', 'appointments', 'appointments');
-    _sbPollTable('niva_expenses',     'expenses',     'expenses');
-  }
-
-  // Start polling after page is fully loaded
-  window.addEventListener('load', function(){
-    setTimeout(function(){
-      var cfg = sbGetConfig();
-      if(!cfg.url || !cfg.key) return;
-      console.log('[NivaSB] Starting realtime polling every '+(_POLL_INTERVAL/1000)+'s');
-      var _rtDot = document.getElementById('sb-rt-dot');
-      var _rtMsg = document.getElementById('sb-rt-msg');
-      if(_rtDot) _rtDot.style.background = '#1b6e35';
-      if(_rtMsg) _rtMsg.textContent = 'Active — polling every 30s for updates from other devices';
-      _sbPollAll(); // First poll immediately
-      setInterval(_sbPollAll, _POLL_INTERVAL);
-    }, 8000); // FIXED: 8s delay (was 5s) — Firebase pull completes first, then SB polls to prevent duplicates
-  });
-
-  // Expose for manual trigger
-  window.sbPollNow = _sbPollAll;
-})();
-
-// ── PUSH single table local → Supabase ────────────────────────
-window.sbPushTable = function(table, localKey){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){ alert('Supabase config missing.'); return; }
-  var msg = document.getElementById('sb-push-msg');
-  if(msg){ msg.style.display='block'; msg.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim(); msg.textContent='🔄 Pushing '+table+'…'; }
-
-  var localArr = [];
-  if(localKey==='bills')         localArr = window.bills||[];
-  else if(localKey==='appointments') localArr = window.appointments||[];
-  else if(localKey==='expenses')     localArr = window.expenses||[];
-  else if(localKey==='patientFiles') localArr = window.patientFiles||[];
-
-  localArr = localArr.filter(Boolean);
-  if(!localArr.length){
-    if(msg){ msg.style.color='#888'; msg.textContent='ℹ️ No data to push for '+localKey; }
-    return;
-  }
-
-  var rows = localArr.map(function(r){ return {id:r.id, data:JSON.stringify(r), updated_at:new Date().toISOString()}; });
-  var chunks = [];
-  for(var i=0;i<rows.length;i+=100) chunks.push(rows.slice(i,i+100));
-
-  chunks.reduce(function(p,chunk){ return p.then(function(){ return sbFetch(table+'?on_conflict=id','POST',chunk); }); }, Promise.resolve())
-  .then(function(){
-    if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Pushed '+localArr.length+' records → '+table; }
-  })
-  .catch(function(e){
-    if(msg){ msg.style.color='#c0392b'; msg.textContent='❌ Push failed: '+e.message; }
-  });
-};
-
-// ── PULL single table Supabase → local ────────────────────────
-// skipRender=true when called from sbPullAll — renders once after all tables complete
-window.sbPullTable = function(table, localKey, skipRender){
-  var cfg = sbGetConfig();
-  if(!cfg.url||!cfg.key){ alert('Supabase config missing.'); return Promise.resolve(); }
-  var msg = document.getElementById('sb-pull-msg');
-  if(msg){ msg.style.display='block'; msg.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim(); msg.textContent='🔄 Pulling '+table+'…'; }
-
-  return sbFetch(table+'?select=id,data,updated_at&limit=10000','GET')
-  .then(function(rows){
-    if(!Array.isArray(rows)||!rows.length){
-      if(msg){ msg.style.color='#888'; msg.textContent='ℹ️ No data in Supabase for '+table; }
-      return;
-    }
-
-    var remote = rows.map(function(r){
-      try{ return typeof r.data==='string' ? JSON.parse(r.data) : r.data; }
-      catch(e){ return null; }
-    }).filter(Boolean);
-
-    // Merge: remote wins on conflict (newer updatedAt)
-    var localArr = [];
-    if(localKey==='bills')             localArr = window.bills||[];
-    else if(localKey==='appointments') localArr = window.appointments||[];
-    else if(localKey==='expenses')     localArr = window.expenses||[];
-    else if(localKey==='patientFiles') localArr = window.patientFiles||[];
-
-    // ── FIXED: ID-normalize merge — prevents Firebase (dot→underscore) vs Supabase ID duplicates ──
-    function _sbSafeId(id){ return (id||'').replace(/[.#$\[\]]/g,'_'); }
-    var map = {};
-    localArr.forEach(function(r){
-      if(!r||!r.id) return;
-      map[r.id] = r;
-      var safe = _sbSafeId(r.id);
-      if(safe !== r.id) map[safe] = r; // also index by firebase-safe key
-    });
-    remote.forEach(function(r){
-      if(!r||!r.id) return;
-      // ── BLOCKLIST CHECK: skip deleted patient IDs ──
-      if(localKey==='patientFiles' && typeof pfIsDeleted==='function' && pfIsDeleted(r.id)) return;
-      var safe = _sbSafeId(r.id);
-      var existing = map[r.id] || map[safe];
-      if(!existing || (r.updatedAt||0) >= (existing.updatedAt||0)){
-        map[r.id] = r;
-        if(safe !== r.id) map[safe] = r;
-      }
-    });
-    // Deduplicate: one unique object per real id AND per normalized name
-    var _seen = new Set();
-    var _seenNames = new Set();
-    var merged = Object.values(map).filter(function(r){
-      if(!r||!r.id||_seen.has(r.id)) return false;
-      if(localKey==='patientFiles'){
-        var normN = typeof pfNormName==='function' ? pfNormName(r.name||'') : (r.name||'').trim().toLowerCase();
-        if(normN && _seenNames.has(normN)) return false;
-        if(normN) _seenNames.add(normN);
-      }
-      _seen.add(r.id); return true;
-    });
-
-    // Save back to local
-    if(localKey==='bills'){
-      window.bills = merged;
-      try{ localStorage.setItem('niva_dental_v3', JSON.stringify(merged)); }catch(e){}
-      try{ if(typeof idbSaveAll==='function') idbSaveAll('bills', merged); }catch(e){}
-    } else if(localKey==='appointments'){
-      window.appointments = merged;
-      try{ localStorage.setItem('niva_appointments', JSON.stringify(merged)); }catch(e){}
-      try{ if(typeof idbSaveAll==='function') idbSaveAll('appointments', merged); }catch(e){}
-    } else if(localKey==='expenses'){
-      window.expenses = merged;
-      try{ localStorage.setItem('niva_expenses', JSON.stringify(merged)); }catch(e){}
-      try{ if(typeof idbSaveAll==='function') idbSaveAll('expenses', merged); }catch(e){}
-    } else if(localKey==='patientFiles'){
-      // ── Dedup before saving: remove id-based duplicates, then dedup treatments ──
-      var dedupedMerged = merged;
-      try{
-        var _map2=new Map();
-        merged.forEach(function(x){ if(x&&x.id){ var ex=_map2.get(x.id); if(!ex||(x.updatedAt||0)>=(ex.updatedAt||0)) _map2.set(x.id,x); }});
-        dedupedMerged=Array.from(_map2.values());
-      }catch(e){}
-      window.patientFiles = dedupedMerged;
-      try{ localStorage.setItem('niva_patient_files', JSON.stringify(dedupedMerged)); }catch(e){}
-      try{ if(typeof idbSaveAll==='function') idbSaveAll('patient_files', dedupedMerged); }catch(e){}
-      // After Supabase pull: run smart merge check (debounced) to handle same-billId duplicates
-      if(window._pfPullMergeTimer) clearTimeout(window._pfPullMergeTimer);
-      window._pfPullMergeTimer = setTimeout(function(){
-        window._pfPullMergeTimer=null;
-        if(typeof pfDeduplicateTreatments==='function') pfDeduplicateTreatments();
-        if(typeof pfSmartMergeAfterPull==='function') pfSmartMergeAfterPull();
-      }, 1500);
-    }
-
-    // Re-render only when called standalone (not from sbPullAll which renders once after all tables)
-    if(!skipRender){
-      if(typeof renderAll==='function') renderAll();
-      if(typeof renderDash==='function') renderDash();
-    }
-
-    if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Pulled '+remote.length+' records from '+table+' (merged with local)'; }
-  })
-  .catch(function(e){
-    if(msg){ msg.style.color='#c0392b'; msg.textContent='❌ Pull failed: '+e.message; }
-  });
-};
-
-// ── PULL ALL ──────────────────────────────────────────────────
-window.sbPullAll = function(){
-  var msg = document.getElementById('sb-pull-msg');
-  if(msg){ msg.style.display='block'; msg.style.color=getComputedStyle(document.documentElement).getPropertyValue('--pri').trim(); msg.textContent='🔄 Pulling all tables…'; }
-  // Pass skipRender=true so each table doesn't trigger its own render;
-  // we do a single render pass after all 4 tables have merged.
-  Promise.all([
-    window.sbPullTable('niva_bills','bills',true),
-    window.sbPullTable('niva_appointments','appointments',true),
-    window.sbPullTable('niva_expenses','expenses',true)
-  ]).then(function(){
-    // Single render after all tables merged
-    try{ if(typeof renderAll==='function') renderAll(); }catch(e){}
-    try{ if(typeof renderDash==='function') renderDash(); }catch(e){}
-    if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Pull All complete — page reload થાય છે…'; }
-    setTimeout(function(){ location.reload(); }, 1500);
-  });
-};
-
-function nivaExportSettings(){
-  var msgEl=document.getElementById('sb-export-msg');
-  try{
-    var exportData={_version:1,_exported:new Date().toISOString(),_app:'Niva Dental',
-      settings:JSON.parse(localStorage.getItem('niva_settings')||'null'),
-      supabase:JSON.parse(localStorage.getItem('niva_supabase_cfg')||'null'),
-      cfg:JSON.parse(localStorage.getItem('niva_cfg')||'null'),
-      fb_weekly:JSON.parse(localStorage.getItem('niva_fb_weekly')||'null'),
-      autosave:JSON.parse(localStorage.getItem('niva_autosave_cfg')||'null')};
-    Object.keys(exportData).forEach(function(k){if(exportData[k]===null)delete exportData[k];});
-    var blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;a.download='niva-settings-'+new Date().toISOString().slice(0,10)+'.json';
-    document.body.appendChild(a);a.click();
-    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},1000);
-    if(msgEl){msgEl.style.display='block';msgEl.style.color='#1b6e35';msgEl.textContent='✅ Settings exported!';setTimeout(function(){msgEl.style.display='none';},3000);}
-  }catch(e){if(msgEl){msgEl.style.display='block';msgEl.style.color='#c0392b';msgEl.textContent='❌ Export failed: '+e.message;}}
-}
-function nivaImportSettings(input){
-  var msgEl=document.getElementById('sb-import-msg');
-  var file=input.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var data=JSON.parse(e.target.result);
-      if(!data._app||data._app!=='Niva Dental'){if(msgEl){msgEl.style.display='block';msgEl.style.color='#c0392b';msgEl.textContent='❌ Invalid file.';}return;}
-      var restored=[];
-      if(data.settings){localStorage.setItem('niva_settings',JSON.stringify(data.settings));try{window.CFG=data.settings;if(typeof saveSettings==='function')saveSettings(window.CFG);}catch(ex){}restored.push('Settings');}
-      if(data.supabase){localStorage.setItem('niva_supabase_cfg',JSON.stringify(data.supabase));if(typeof sbLoadConfigToUI==='function')sbLoadConfigToUI();restored.push('Supabase');}
-      if(data.cfg){localStorage.setItem('niva_cfg',JSON.stringify(data.cfg));restored.push('Config');}
-      if(data.fb_weekly){localStorage.setItem('niva_fb_weekly',JSON.stringify(data.fb_weekly));restored.push('Firebase Schedule');}
-      if(data.autosave){localStorage.setItem('niva_autosave_cfg',JSON.stringify(data.autosave));restored.push('Auto-save');}
-      try{if(typeof loadClinicForm==='function')loadClinicForm();}catch(ex){}
-      try{if(typeof loadBillingForm==='function')loadBillingForm();}catch(ex){}
-      try{if(typeof updateTopbar==='function')updateTopbar();}catch(ex){}
-      try{if(typeof applyTheme==='function'&&window.CFG&&window.CFG.theme)applyTheme(window.CFG.theme.color);}catch(ex){}
-      if(msgEl){msgEl.style.display='block';msgEl.style.color='#1b6e35';msgEl.textContent='✅ Restored: '+restored.join(', ')+'. Reloading…';setTimeout(function(){location.reload();},2000);}
-    }catch(err){if(msgEl){msgEl.style.display='block';msgEl.style.color='#c0392b';msgEl.textContent='❌ Import failed: '+err.message;}}
-    input.value='';
-  };
-  reader.readAsText(file);
-}
-
-
 function appRefresh(){
   var icon=document.getElementById('tb-refresh-icon');
   var btn=document.getElementById('tb-refresh-btn');
@@ -21077,50 +20245,19 @@ function appRefresh(){
   if(btn){btn.disabled=true;setTimeout(function(){if(btn)btn.disabled=false;},3000);}
 
   var fbConfigured=!!(typeof CFG!=='undefined'&&CFG.firebase&&CFG.firebase.dburl);
-  var sbConfigured=(function(){try{var c=JSON.parse(localStorage.getItem('niva_supabase_cfg')||'{}');return !!(c.url&&c.key);}catch(e){return false;}})();
-
-  // ── FIXED: Serial pull — FB first (silent), SB after 3s delay
-  // Prevents race-condition duplicates when both sources merge simultaneously
-  var pulled=false;
-
-  var doSBPull=function(){
-    if(sbConfigured&&typeof sbPullAll==='function'){try{sbPullAll();pulled=true;}catch(e){}}
-    if(!pulled){location.reload();}
-  };
 
   if(fbConfigured&&typeof fbPullAll==='function'){
-    try{fbPullAll(true);pulled=true;}catch(e){}  // silent=true to suppress FB alert
-    // Wait 3s for Firebase pull to complete before Supabase merge
-    setTimeout(doSBPull, 3000);
+    try{fbPullAll(true);}catch(e){}
+    setTimeout(function(){
+      try{if(typeof renderDash==='function')renderDash();}catch(e){}
+      try{if(typeof renderBills==='function')renderBills();}catch(e){}
+      try{if(typeof renderApptToday==='function')renderApptToday();}catch(e){}
+    },3000);
   } else {
-    doSBPull();
+    location.reload();
   }
-
-  if(!fbConfigured&&!sbConfigured){location.reload();return;}
-
-  setTimeout(function(){
-    try{if(typeof renderDash==='function')renderDash();}catch(e){}
-    try{if(typeof renderBills==='function')renderBills();}catch(e){}
-    try{if(typeof renderApptToday==='function')renderApptToday();}catch(e){}
-  },5000);
 }
-
 </script>
-
-
-<!-- ── Monthly Collected Detail Modal ── -->
-<div id="mon-collected-modal" class="ov" onclick="if(event.target===this)closeM('mon-collected-modal')">
-  <div class="modal" style="max-width:560px;padding:0;overflow:hidden">
-    <div style="background:var(--pri);padding:16px 18px;display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="color:#fff;font-size:15px;font-weight:700">💰 Monthly Collected</div>
-        <div id="mon-collected-modal-sub" style="color:rgba(255,255,255,.75);font-size:12px;margin-top:2px"></div>
-      </div>
-      <button onclick="closeM('mon-collected-modal')" style="background:rgba(255,255,255,.18);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer">✕</button>
-    </div>
-    <div id="mon-collected-modal-body" style="max-height:70vh;overflow-y:auto;padding:0"></div>
-  </div>
-</div>
 
 <!-- ── Smart Bill Choice Modal (bottom sheet) ── -->
 <div id="smart-bill-choice-modal" class="ov" style="align-items:flex-end !important;padding:0 !important">
@@ -21183,3 +20320,36 @@ function appRefresh(){
     </div>
   </div>
 </div>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js", { scope: "./" })
+      .then(function (reg) {
+        console.log("[PWA] SW registered:", reg.scope);
+        reg.addEventListener("updatefound", function () {
+          var nw = reg.installing;
+          nw.addEventListener("statechange", function () {
+            if (nw.state === "installed" && navigator.serviceWorker.controller) {
+              if (confirm("App updated! Reload now?")) window.location.reload();
+            }
+          });
+        });
+      })
+      .catch(function (err) { console.warn("[PWA] SW failed:", err); });
+  });
+  window.addEventListener("online", function () {
+    if ("SyncManager" in window) {
+      navigator.serviceWorker.ready.then(function(reg){ reg.sync.register("namah-sync"); }).catch(function(){});
+    }
+  });
+  navigator.serviceWorker.addEventListener("message", function (e) {
+    if (e.data && e.data.type === "SYNC_NOW") {
+      try { if (typeof fbPullAll === "function") fbPullAll(true); } catch(ex) {}
+    }
+  });
+}
+</script>
+
+</body>
+</html>
