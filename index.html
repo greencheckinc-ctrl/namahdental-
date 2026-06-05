@@ -998,6 +998,8 @@ function showLockAfterSplash(){
     <button id="mob-nav-reports" onclick="showTab('reports',this);closeMobDrawer()"><span class="mdi">&#128202;</span> Reports</button>
     <button id="mob-nav-settings" onclick="showTab('settings',this);closeMobDrawer()"><span class="mdi">&#9881;</span> Settings</button>
     <div class="sep"></div>
+    <button onclick="appRefresh();closeMobDrawer()" style="color:var(--pri)"><span class="mdi">🔄</span> Refresh</button>
+    <div class="sep"></div>
     <button onclick="openLogoutModal();closeMobDrawer()" style="color:#c0392b"><span class="mdi">&#128274;</span> Logout</button>
 
   </nav>
@@ -1068,7 +1070,7 @@ function showLockAfterSplash(){
   <div id="dash-graphs-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;align-items:stretch;">
 
     <!-- 📈 12-MONTH INCOME TREND -->
-    <div id="income-trend-panel" style="background:#fff;border-radius:10px;border:1px solid #e0e8ee;overflow:hidden;display:flex;flex-direction:column;min-width:0;min-height:460px;">
+    <div id="income-trend-panel" style="background:#fff;border-radius:10px;border:1px solid #e0e8ee;overflow:hidden;display:flex;flex-direction:column;min-width:0;min-height:380px;max-height:390px;">
       <div style="background:linear-gradient(135deg,var(--pri) 0%,var(--pri-dark) 100%);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;flex-shrink:0;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:16px;">📈</span>
@@ -1093,8 +1095,8 @@ function showLockAfterSplash(){
           </button>
         </div>
       </div>
-      <div style="padding:14px 14px 12px;flex:1;display:flex;flex-direction:column;min-height:0;">
-        <div style="position:relative;width:100%;flex:1;min-height:200px;">
+      <div style="padding:6px 10px 6px;flex:1;display:flex;flex-direction:column;min-height:0;">
+        <div id="dash-income-chart-wrap" style="position:relative;width:100%;height:320px;min-height:320px;max-height:320px;">
           <canvas id="dash-income-chart" style="position:absolute;top:0;left:0;width:100%;height:100%;display:block;"></canvas>
           <div id="dash-income-chart-empty" style="display:none;text-align:center;padding:32px;color:#bbb;font-size:12px;">No data yet</div>
         </div>
@@ -1102,7 +1104,7 @@ function showLockAfterSplash(){
     </div>
 
     <!-- 👥 NEW VS RETURNING PATIENTS -->
-    <div id="patient-graph-panel" style="background:#fff;border-radius:10px;border:1px solid #e0e8ee;overflow:hidden;display:flex;flex-direction:column;min-width:0;min-height:460px;">
+    <div id="patient-graph-panel" style="background:#fff;border-radius:10px;border:1px solid #e0e8ee;overflow:hidden;display:flex;flex-direction:column;min-width:0;min-height:380px;max-height:390px;">
       <div style="background:linear-gradient(135deg,var(--pri) 0%,var(--pri-dark) 100%);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;">
         <div style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;" onclick="togglePatientGraphPanel()">
           <span style="font-size:16px;">👥</span>
@@ -3416,6 +3418,57 @@ function showLockAfterSplash(){
             <div id="allowed-email-list" style="display:flex;flex-direction:column;gap:6px"></div>
             <div id="allowed-email-msg" style="font-size:12px;color:#27ae60;margin-top:6px;min-height:16px"></div>
           </div>
+        </div>
+
+        <!-- ══ STAFF ROLES & ACCESS CONTROL ══ -->
+        <div style="margin-top:22px">
+          <div class="sec" style="margin-bottom:14px">&#128101; Staff Roles &amp; Access Control</div>
+          <div style="font-size:12px;color:#888;margin-bottom:14px;line-height:1.6;background:#f0f8ff;border:1px solid #b3d9f0;border-radius:8px;padding:10px 12px">
+            <strong>Doctor (Admin)</strong> — full access to everything.<br>
+            <strong>Receptionist</strong> — only allowed tabs below. Cannot access Cashbook, Expenses, Reports, Settings by default.<br>
+            Add staff emails and assign roles. On login, access is automatically restricted.
+          </div>
+
+          <!-- Add Staff Member -->
+          <div style="background:#fff;border:1px solid #e0e8ee;border-radius:10px;padding:16px;margin-bottom:12px">
+            <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">&#43; Add Staff Member</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+              <input id="staff-email-inp" type="email" placeholder="staff@email.com" style="flex:2;min-width:160px;padding:8px 10px;border:1.5px solid #cdd5dd;border-radius:6px;font-size:13px;outline:none"/>
+              <select id="staff-role-inp" onchange="staffRoleChanged()" style="flex:1;min-width:130px;padding:8px 10px;border:1.5px solid #cdd5dd;border-radius:6px;font-size:13px;outline:none;background:#fff">
+                <option value="doctor">&#128104;&#8205;&#9877;&#65039; Doctor (Admin)</option>
+                <option value="reception">&#129333; Receptionist</option>
+              </select>
+            </div>
+            <!-- Custom permission checkboxes (shown for reception) -->
+            <div id="staff-perm-box" style="background:#f8fafc;border:1px solid #e0e8ee;border-radius:8px;padding:12px;margin-bottom:10px">
+              <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">&#128274; Allowed Tabs for this Staff</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-dashboard" checked style="accent-color:var(--pri)"> Dashboard</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-newbill" checked style="accent-color:var(--pri)"> Add Patient / Bill</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-cashbook" style="accent-color:var(--pri)"> View Patient</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-patientfile" checked style="accent-color:var(--pri)"> Patient File</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-appointments" checked style="accent-color:var(--pri)"> Appointments</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-prescription" checked style="accent-color:var(--pri)"> Prescription</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-viewbills" style="accent-color:var(--pri)"> Cash Book</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-expenses" style="accent-color:var(--pri)"> Expenses</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-reports" style="accent-color:var(--pri)"> Reports</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-settings" style="accent-color:var(--pri)"> Settings</label>
+              </div>
+              <div style="margin-top:10px;padding-top:10px;border-top:1px solid #e0e8ee">
+                <div style="font-size:11px;font-weight:700;color:#666;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">&#9998; Data Actions</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                  <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-canedit" checked style="accent-color:var(--pri)"> Can Edit Records</label>
+                  <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-candelete" style="accent-color:var(--pri)"> Can Delete Records</label>
+                  <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-cancollect" checked style="accent-color:var(--pri)"> Can Collect Payment</label>
+                </div>
+              </div>
+            </div>
+            <div id="staff-add-msg" style="font-size:12px;color:#27ae60;min-height:16px;margin-bottom:8px"></div>
+            <button class="btn bg" onclick="addStaffMember()" style="width:100%">&#43; Add Staff Member</button>
+          </div>
+
+          <!-- Staff List -->
+          <div id="staff-member-list" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
 
       </div>
@@ -7641,6 +7694,29 @@ function renderDash(){
     ${(function(){const fuCnt=appointments.filter(a=>a.status==='Scheduled'&&a.isFollowUp&&a.date>=tod).length;return fuCnt>0?`<div class="stat" style="border-left:3px solid #e67e22"><div class="lb">🔔 Follow-Up Due</div><div class="vl" style="color:#e67e22">${fuCnt}</div></div>`:''})()}`;
   (function(){var el=document.getElementById('dstats');if(el){var cnt=el.children.length||8;el.style.gridTemplateColumns='repeat('+cnt+',1fr)';}})();
 
+  // ── Receptionist: hide all amount tiles and income panels ──
+  (function(){
+    var r=getCurrentRole();
+    var isReception=(r.role==='reception');
+    var dstatsEl=document.getElementById('dstats');
+    if(dstatsEl){
+      Array.from(dstatsEl.children).forEach(function(tile){
+        var lb=tile.querySelector('.lb');
+        var lbText=lb?lb.textContent:'';
+        var isPatientsTile=(lbText.indexOf('Patients Today')>=0);
+        tile.style.display=(isReception&&!isPatientsTile)?'none':'';
+      });
+      var vis=Array.from(dstatsEl.children).filter(function(t){return t.style.display!=='none';});
+      dstatsEl.style.gridTemplateColumns='repeat('+(vis.length||1)+',1fr)';
+    }
+    var monthlyPanel=document.getElementById('monthly-income-panel');
+    if(monthlyPanel) monthlyPanel.style.display=isReception?'none':'';
+    var incomeTrend=document.getElementById('income-trend-panel');
+    if(incomeTrend) incomeTrend.style.display=isReception?'none':'';
+    var graphsRow=document.getElementById('dash-graphs-row');
+    if(graphsRow) graphsRow.style.gridTemplateColumns=isReception?'1fr':'1fr 1fr';
+  })();
+
   // ── MONTHLY INCOME PANEL ──────────────────────────────────────────────────
   const todObj=new Date(tod);
   const currentMonYY=tod.slice(0,7); // "YYYY-MM" for today
@@ -7717,7 +7793,20 @@ function renderDash(){
     <div class="stat"><div class="lb">Patients (Month)</div><div class="vl">${monPatients}</div></div>
     <div class="stat"><div class="lb">Monthly Expenses</div><div class="vl r">${cur}${monExp.toLocaleString('en-IN')}</div></div>
     <div class="stat" style="${monNet>=0?'border-left:3px solid #1b6e35':'border-left:3px solid #c0392b'}"><div class="lb">Net Profit (Month)</div><div class="vl ${monNet>=0?'g':'r'}">${cur}${monNet.toLocaleString('en-IN')}</div></div>`;
-  if(mstatsEl){var cnt=mstatsEl.children.length||8;mstatsEl.style.gridTemplateColumns='repeat('+cnt+',1fr)';}
+  if(mstatsEl){
+    var _r2=getCurrentRole();
+    if(_r2.role==='reception'){
+      Array.from(mstatsEl.children).forEach(function(t){
+        var lb=t.querySelector('.lb');
+        var lbText=lb?lb.textContent:'';
+        t.style.display=(lbText.indexOf('Patients')>=0)?'':'none';
+      });
+    } else {
+      Array.from(mstatsEl.children).forEach(function(t){t.style.display='';});
+    }
+    var _vis2=Array.from(mstatsEl.children).filter(function(t){return t.style.display!=='none';});
+    mstatsEl.style.gridTemplateColumns='repeat('+(_vis2.length||1)+',1fr)';
+  }
 
   if(!td.length){
     const todShowAppts=appointments.filter(a=>a.date===tod&&a.status==='Done');
@@ -8005,7 +8094,11 @@ function _renderIncomeGraphNow(){
   const isMobile=W<480;
   const FSIZE=isMobile?9:10;
   const FSIZE_VAL=isMobile?9:10;
-  const H=canvas.parentElement?(canvas.parentElement.offsetHeight||260):260; // fill container
+  const H=(function(){
+    var wrap=document.getElementById('dash-income-chart-wrap');
+    if(wrap && wrap.offsetHeight>80) return wrap.offsetHeight;
+    return isMobile?220:320;
+  })();
   const dpr=window.devicePixelRatio||1;
   canvas.width=W*dpr;
   canvas.height=H*dpr;
@@ -8015,7 +8108,7 @@ function _renderIncomeGraphNow(){
   ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,W,H);
 
-  const PAD={top:36,right:20,bottom:isMobile?54:52,left:isMobile?48:56};
+  const PAD={top:44,right:24,bottom:isMobile?50:48,left:isMobile?52:62};
   const cW=W-PAD.left-PAD.right;
   const cH=H-PAD.top-PAD.bottom;
   const n=months.length;
@@ -8103,7 +8196,7 @@ function _renderIncomeGraphNow(){
           ctx.textBaseline='alphabetic';
           ctx.font=(isSel?'bold ':'')+9+'px Arial';
           ctx.fillStyle=EXPENSE_COLOR;
-          var ly=Math.max(PAD.top+2,y-9);
+          var ly=Math.max(PAD.top+14,y-12);
           var lx2=Math.max(PAD.left+18,Math.min(W-PAD.right-18,x));
           ctx.fillText(cur+lv,lx2,ly);
           ctx.restore();
@@ -8126,7 +8219,7 @@ function _renderIncomeGraphNow(){
     var val=m[SK];
     if(val<=0) return;
     var x=xPos(i);
-    var y=Math.max(PAD.top+2,yPos(val)-9);
+    var y=Math.max(PAD.top+14,yPos(val)-12);
     var lv=val>=100000?(val/100000).toFixed(1)+'L':val>=1000?(val/1000).toFixed(val%1000===0?0:1)+'k':Math.round(val).toString();
     var isCurrent=m.key===tod.slice(0,7);
     var isSel=m.key===selMonth;
@@ -8176,8 +8269,8 @@ function _renderIncomeGraphNow(){
     ctx.textBaseline='alphabetic';
     ctx.font=(lb.isSel?'bold ':'')+(lb.isSel?FSIZE_VAL+1:FSIZE_VAL-1)+'px Arial';
     ctx.fillStyle=lb.isSel?sColor:(lb.isCurrent?sColor:'#333');
-    var cy=Math.max(PAD.top+2,lb.y);
-    var cx=Math.max(PAD.left+18,Math.min(W-PAD.right-18,lb.x));
+    var cy=Math.max(PAD.top+14,lb.y);
+    var cx=Math.max(PAD.left+22,Math.min(W-PAD.right-22,lb.x));
     ctx.fillText(lb.lv,cx,cy);
     ctx.restore();
   });
@@ -10791,7 +10884,189 @@ function printSummaryReport(){
   </body></html>`;
   openPreviewModal('summary',null,html,`Summary Report (${f.length} bills)`);
 }
+// ══════════════════════════════════════════════════
+// STAFF ROLES & ACCESS CONTROL SYSTEM
+// ══════════════════════════════════════════════════
+var STAFF_ROLES_KEY = 'niva_staff_roles';
+var CURRENT_ROLE_KEY = '_niva_current_role';
+
+function getStaffRoles(){
+  try{ return JSON.parse(localStorage.getItem(STAFF_ROLES_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveStaffRoles(list){
+  try{ localStorage.setItem(STAFF_ROLES_KEY, JSON.stringify(list)); }catch(e){}
+}
+
+// Get role config for a given email
+function getStaffByEmail(email){
+  if(!email) return null;
+  var list = getStaffRoles();
+  var em = email.toLowerCase().trim();
+  return list.find(function(s){ return s.email.toLowerCase()===em; }) || null;
+}
+
+// Called after login — detect role and store in sessionStorage
+function applyRoleForEmail(email){
+  var staff = getStaffByEmail(email);
+  var role = staff ? staff.role : 'doctor'; // unknown email = full admin
+  try{
+    sessionStorage.setItem(CURRENT_ROLE_KEY, JSON.stringify({
+      email: email,
+      role: role,
+      permissions: staff ? staff.permissions : null
+    }));
+  }catch(e){}
+  applyRoleRestrictions();
+}
+
+// Get current session role object
+function getCurrentRole(){
+  try{
+    var raw = sessionStorage.getItem(CURRENT_ROLE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return { role: 'doctor', permissions: null }; // default full access
+}
+
+// Returns true if current user can access this tab
+function canAccessTab(tabName){
+  var r = getCurrentRole();
+  if(r.role === 'doctor') return true; // full admin
+  var perms = r.permissions;
+  if(!perms || !perms.tabs) return false;
+  return perms.tabs.indexOf(tabName) >= 0;
+}
+
+// Hide/show nav buttons and apply role badge in topbar
+function applyRoleRestrictions(){
+  var r = getCurrentRole();
+  var isDr = r.role === 'doctor';
+  var perms = r.permissions || {};
+  var allowedTabs = isDr ? null : (perms.tabs || []);
+
+  // All tab names in nav
+  var allTabs = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'];
+  allTabs.forEach(function(t){
+    // Desktop nav buttons (by onclick attribute match)
+    document.querySelectorAll('.nav button').forEach(function(btn){
+      if(btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'"+t+"'")>=0){
+        btn.style.display = (isDr || allowedTabs.indexOf(t)>=0) ? '' : 'none';
+      }
+    });
+    // Mobile drawer buttons
+    var mob = document.getElementById('mob-nav-'+t);
+    if(mob) mob.style.display = (isDr || allowedTabs.indexOf(t)>=0) ? '' : 'none';
+  });
+
+  // Role badge in topbar
+  var badge = document.getElementById('role-badge');
+  if(!badge){
+    badge = document.createElement('div');
+    badge.id = 'role-badge';
+    badge.style.cssText = 'font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;margin-left:8px;display:inline-block';
+    var tbr = document.querySelector('.topbar-r');
+    if(tbr) tbr.insertBefore(badge, tbr.firstChild);
+  }
+  if(isDr){
+    badge.textContent = '👨‍⚕️ Doctor';
+    badge.style.background = 'rgba(255,255,255,0.2)';
+    badge.style.color = '#fff';
+  } else {
+    badge.textContent = '🧑‍💼 Reception';
+    badge.style.background = 'rgba(255,200,0,0.25)';
+    badge.style.color = '#fff8cc';
+  }
+}
+
+// Render staff member list in settings
+function renderStaffList(){
+  var el = document.getElementById('staff-member-list');
+  if(!el) return;
+  var list = getStaffRoles();
+  if(!list.length){
+    el.innerHTML = '<div style="font-size:12px;color:#aaa;text-align:center;padding:14px;background:#fff;border:1px solid #e0e8ee;border-radius:8px">No staff members added yet.</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(s,i){
+    var isDoc = s.role === 'doctor';
+    var tabs = (!isDoc && s.permissions && s.permissions.tabs) ? s.permissions.tabs : [];
+    var tabLabels = {dashboard:'Dashboard',newbill:'Add Patient',cashbook:'View Patient',patientfile:'Patient File',appointments:'Appointments',prescription:'Prescription',viewbills:'Cash Book',expenses:'Expenses',reports:'Reports',settings:'Settings'};
+    var tabChips = tabs.map(function(t){ return '<span style="background:#e0f2f8;color:var(--pri);border-radius:10px;padding:2px 7px;font-size:10px;font-weight:700">'+( tabLabels[t]||t)+'</span>'; }).join(' ');
+    var actions = (!isDoc && s.permissions) ? [
+      s.permissions.canEdit ? '✏️ Edit' : '',
+      s.permissions.canDelete ? '🗑 Delete' : '',
+      s.permissions.canCollect ? '💰 Collect' : ''
+    ].filter(Boolean).join(' · ') : '';
+    return '<div style="background:#fff;border:1px solid #e0e8ee;border-radius:9px;padding:13px 14px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<div style="display:flex;align-items:center;gap:8px">'
+      +'<span style="font-size:18px">'+(isDoc?'👨‍⚕️':'🧑‍💼')+'</span>'
+      +'<div><div style="font-size:13px;font-weight:700;color:#222">'+s.email+'</div>'
+      +'<div style="font-size:11px;color:#888;margin-top:1px">'+(isDoc?'Doctor — Full Admin Access':'Receptionist')+'</div></div></div>'
+      +'<button onclick="deleteStaffMember('+i+')" style="background:#fdf0ef;color:#c0392b;border:1px solid #f0b8b3;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">✕ Remove</button>'
+      +'</div>'
+      +(!isDoc && tabs.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">'+tabChips+'</div>' : '')
+      +(actions ? '<div style="font-size:11px;color:#666;margin-top:5px">'+actions+'</div>' : '')
+      +'</div>';
+  }).join('');
+}
+
+window.staffRoleChanged = function(){
+  var sel = document.getElementById('staff-role-inp');
+  var box = document.getElementById('staff-perm-box');
+  if(!sel||!box) return;
+  box.style.display = sel.value === 'reception' ? 'block' : 'none';
+};
+
+window.addStaffMember = function(){
+  var emailEl = document.getElementById('staff-email-inp');
+  var roleEl  = document.getElementById('staff-role-inp');
+  var msgEl   = document.getElementById('staff-add-msg');
+  if(!emailEl||!roleEl) return;
+  var email = emailEl.value.trim().toLowerCase();
+  var role  = roleEl.value;
+  if(!email || email.indexOf('@')<1){ if(msgEl){msgEl.style.color='#c0392b';msgEl.textContent='Invalid email.';} return; }
+  var list = getStaffRoles();
+  if(list.find(function(s){ return s.email.toLowerCase()===email; })){
+    if(msgEl){msgEl.style.color='#c0392b';msgEl.textContent='Email already added.';} return;
+  }
+  var perms = null;
+  if(role === 'reception'){
+    var tabs = [];
+    ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'].forEach(function(t){
+      var el = document.getElementById('sp-'+t);
+      if(el && el.checked) tabs.push(t);
+    });
+    perms = {
+      tabs: tabs,
+      canEdit:    !!(document.getElementById('sp-canedit')   && document.getElementById('sp-canedit').checked),
+      canDelete:  !!(document.getElementById('sp-candelete') && document.getElementById('sp-candelete').checked),
+      canCollect: !!(document.getElementById('sp-cancollect')&& document.getElementById('sp-cancollect').checked)
+    };
+  }
+  list.push({ email:email, role:role, permissions:perms });
+  saveStaffRoles(list);
+  emailEl.value = '';
+  if(msgEl){msgEl.style.color='#1b6e35';msgEl.textContent='✓ Staff member added!';setTimeout(function(){msgEl.textContent='';},2500);}
+  renderStaffList();
+};
+
+window.deleteStaffMember = function(idx){
+  var list = getStaffRoles();
+  list.splice(idx,1);
+  saveStaffRoles(list);
+  renderStaffList();
+};
+
+// Patch showTab to enforce role restrictions
+var _origShowTab = null;
 function showTab(name,btn){
+  // Role-based access check
+  if(!canAccessTab(name)){
+    var rLabel = getCurrentRole().role === 'reception' ? 'Receptionist' : 'Staff';
+    alert('⛔ Access Denied\n\nThis section is not available for your role ('+rLabel+').\nPlease contact your admin.');
+    return;
+  }
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('act'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('act'));
   document.querySelectorAll('.mob-drawer nav button').forEach(b=>b.classList.remove('act'));
@@ -10800,7 +11075,7 @@ function showTab(name,btn){
   // sync mobile drawer highlight
   const mobBtn=document.getElementById('mob-nav-'+name);
   if(mobBtn)mobBtn.classList.add('act');
-  if(name==='settings'){loadClinicForm();renderThemeGrid();loadBillingForm();loadEmailForm();loadFBForm();loadPFForm();loadApptMsgForm();setTimeout(refreshSetActivationCard,50);showSetSection('clinic',document.querySelector('.setnav button:first-child'));}
+  if(name==='settings'){loadClinicForm();renderThemeGrid();loadBillingForm();loadEmailForm();loadFBForm();loadPFForm();loadApptMsgForm();setTimeout(refreshSetActivationCard,50);showSetSection('clinic',document.querySelector('.setnav button:first-child'));renderStaffList();staffRoleChanged();}
   if(name==='expenses')renderExp();
   if(name==='reports'){setTimeout(()=>{
     const now=new Date();
@@ -13426,6 +13701,25 @@ function initFirebase(){
     });
 }
 setTimeout(initFirebase, 800);
+// Restore role restrictions on page reload if session is valid
+(function(){
+  try{
+    var storedRole = sessionStorage.getItem('_niva_current_role');
+    if(!storedRole){
+      // Try to re-apply from last logged-in email
+      var lastEmail = localStorage.getItem('niva_fb_login_email') || '';
+      if(lastEmail) applyRoleForEmail(lastEmail);
+    } else {
+      applyRoleRestrictions();
+    }
+  }catch(e){}
+  // Also re-apply when security settings are opened
+  var _secOrigOpen = window.showSetSection;
+  window.showSetSection = function(id, btn){
+    if(typeof _secOrigOpen === 'function') _secOrigOpen(id, btn);
+    if(id === 'security'){ renderStaffList(); staffRoleChanged(); }
+  };
+})();
 function loadEmailForm(){
   const E=CFG.email||{};
   document.getElementById('s-myemail').value=E.myemail||'';
@@ -17244,6 +17538,7 @@ window.addEventListener('load', function(){
           _fbAuthUser=result.user.email; _fbAuthUid=result.user.uid; _fbAuthExpiry=Date.now()+3600*1000;
           localStorage.setItem('niva_fb_login_email',result.user.email);
           if(allowed.length===0){ try{ localStorage.setItem('niva_allowed_emails',JSON.stringify([email])); }catch(ex){} }
+          applyRoleForEmail(result.user.email||'');
           _setSession(); hideLoginModal();
         })
         .catch(function(e){
@@ -17295,6 +17590,7 @@ window.addEventListener('load', function(){
           _fbAuthUid    = data.localId;
           _fbAuthExpiry = Date.now()+(parseInt(data.expiresIn||3600)-300)*1000;
           localStorage.setItem('niva_fb_login_email', data.email);
+          applyRoleForEmail(data.email||'');
           _setSession();
           hideLoginModal();
         }
@@ -17313,6 +17609,7 @@ window.addEventListener('load', function(){
     var storedUser = localStorage.getItem(LS_USER);
     var storedPass = localStorage.getItem(LS_PASS);
     if(hUser === storedUser && hPass === storedPass){
+      applyRoleForEmail(email||'');
       _setSession();
       hideLoginModal();
     } else {
@@ -17902,7 +18199,13 @@ window.addEventListener('load', function(){
 
   // --- Check trial state ---
   function checkTrial(){
-    return {ok:true}; // Always activated — no trial restriction
+    if(isActivated()) return {ok:true};
+    let install=getInstallDate();
+    if(!install){ setInstallDate(); install=Date.now(); }
+    const daysUsed=Math.floor((Date.now()-install)/(1000*60*60*24));
+    const daysLeft=Math.max(0,TRIAL_DAYS-daysUsed);
+    if(daysLeft<=0) return {ok:false, expired:true, daysLeft:0};
+    return {ok:true, trial:true, daysLeft:daysLeft};
   }
 
   // --- UI ---
@@ -18016,7 +18319,11 @@ window.refreshSetActivationCard=function(){
     const TRIAL_DAYS=30;
 
     function isAct(){
-      return true; // Always activated
+      try{
+        const v=localStorage.getItem(K_STATUS);
+        if(!v) return false;
+        return v.startsWith('activated')||atob(v).startsWith('activated');
+      }catch(e){return false;}
     }
 
     if(isAct()){
