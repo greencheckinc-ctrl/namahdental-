@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.supabase.co https://identitytoolkit.googleapis.com https://generativelanguage.googleapis.com https://api.allorigins.win https://zenquotes.io; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="var(--pri)"/>
@@ -127,7 +128,8 @@ tr:hover td{background:#f9fbfc}
 .mhdr{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e8edf0}
 .mhdr-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .mhdr span{font-weight:700;font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mbtns{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:6px;align-items:center}
+.mbtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;align-items:center}
+.mbtns .btn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mbtns .xb{grid-column:auto;min-width:0;max-width:46px;justify-self:end}
 .xb{background:#c0392b;border:none;font-size:16px;cursor:pointer;color:#fff;line-height:1;width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}.xb:hover{background:#a93226;transform:scale(1.08)}
 .bwrap{border:1px solid #e0e8ee;border-radius:8px;padding:18px}
@@ -1075,6 +1077,7 @@ function showLockAfterSplash(){
     <button id="mob-nav-patientfile" onclick="showTab('patientfile',this);closeMobDrawer()"><span class="mdi">&#128196;</span> Patient File</button>
     <button id="mob-nav-appointments" onclick="showTab('appointments',this);closeMobDrawer()"><span class="mdi">&#128197;</span> Appointments</button>
     <button id="mob-nav-prescription" onclick="showTab('prescription',this);closeMobDrawer()"><span class="mdi">&#128138;</span> Prescription</button>
+    <button id="mob-nav-stock" onclick="showTab('stock',this);closeMobDrawer()"><span class="mdi">&#128230;</span> Stock</button>
     <button id="mob-nav-expenses" onclick="showTab('expenses',this);closeMobDrawer()"><span class="mdi">&#128184;</span> Expenses</button>
     <button id="mob-nav-viewbills" onclick="showTab('viewbills',this);closeMobDrawer()"><span class="mdi">&#128216;</span> Cash Book</button>
     <button id="mob-nav-reports" onclick="showTab('reports',this);closeMobDrawer()"><span class="mdi">&#128202;</span> Reports</button>
@@ -1092,6 +1095,7 @@ function showLockAfterSplash(){
   <button onclick="showTab('patientfile',this)">&#128196; Patient File</button>
   <button onclick="showTab('appointments',this)">&#128197; Appointments</button>
   <button onclick="showTab('prescription',this)">&#128138; Prescription</button>
+  <button onclick="showTab('stock',this)">&#128230; Stock</button>
   <button onclick="showTab('expenses',this)">&#128184; Expenses</button>
   <button onclick="showTab('viewbills',this)">&#128216; Cash Book</button>
   <button onclick="showTab('reports',this)">&#128202; Reports</button>
@@ -1946,6 +1950,39 @@ function showLockAfterSplash(){
   </div>
 </div>
 
+<!-- STOCK TAB -->
+<div id="tab-stock" class="panel">
+  <div class="sbar" style="flex-wrap:wrap;gap:8px">
+    <input id="stock-search" placeholder="Search item..." oninput="renderStock()" style="flex:1;min-width:160px"/>
+    <button class="btn bg sm" onclick="openStockQuickAdd()">&#43; Quick Add</button>
+  </div>
+  <div id="stock-list" style="margin-top:12px"></div>
+</div>
+
+<!-- Stock: Quick Add / Edit Modal -->
+<div id="stock-quick-modal" class="ov">
+  <div class="modal" style="max-width:400px;padding:0">
+    <div class="mhdr"><div class="mhdr-top"><span id="stock-modal-title">&#43; Quick Add Stock</span><button onclick="closeM('stock-quick-modal')" class="btn bo sm">✕</button></div></div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+      <label style="font-size:12px;font-weight:600;color:#555">Date of Purchase</label>
+      <input id="stock-date" type="date" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <label style="font-size:12px;font-weight:600;color:#555">Item</label>
+      <input id="stock-item" placeholder="e.g. Cotton Rolls, Gloves, GIC Cement..." style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <label style="font-size:12px;font-weight:600;color:#555">Qty/Pkt</label>
+      <input id="stock-qty" placeholder="e.g. 10 pkt, 50 pcs, 2 box" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <label style="font-size:12px;font-weight:600;color:#555">Expiry Date</label>
+      <input id="stock-expiry" type="date" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <label style="font-size:12px;font-weight:600;color:#555">Other</label>
+      <input id="stock-other" placeholder="Notes, batch no, supplier..." style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <input id="stock-edit-id" type="hidden" value=""/>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn bg" style="flex:1" onclick="saveStockItem()">&#10003; Save</button>
+        <button class="btn bo" style="flex:1" onclick="closeM('stock-quick-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- VIEW BILLS (now = Cash Book: combined bills + expenses ledger) -->
 <div id="tab-viewbills" class="panel">
   <div class="stats" id="cbstats"></div>
@@ -2318,6 +2355,7 @@ function showLockAfterSplash(){
       <button class="btn bo sm" onclick="pfRemoveDupAllPatients()" title="Remove duplicate treatments for ALL patients" style="background:#fdecea;color:#c0392b;border-color:#f0b8b3">🧹 Remove All Duplicates</button>
       <button class="btn bo sm" onclick="pfOpenAddImage()" style="background:#e8f4f8;color:var(--pri);border-color:var(--pri-text)">📷 Add Image</button>
       <button class="btn bo sm" onclick="pfSyncImagesFromCloud()" id="pf-sync-img-btn" title="Firebase thi images fetch karo" style="background:#f0f4f7;color:#555;border-color:#cdd5dd">☁️ Sync Images</button>
+      <button class="btn bo sm" onclick="pfOpenAddConsent()" style="background:#f3ecfb;color:#6a3d9a;border-color:#c9aee0">📝 Consent Form</button>
     </div>
     <div id="pf-img-gallery" style="display:none;margin-bottom:14px"></div>
     <div id="pf-det-info" style="background:#f7fafd;border:1px solid #e0e8ee;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;display:flex;gap:24px;flex-wrap:wrap"></div>
@@ -2669,6 +2707,7 @@ function showLockAfterSplash(){
     <!-- ── End FDI Dental Chart ── -->
 
     <div id="pf-treatments"></div>
+    <div id="pf-consents" style="margin-top:14px"></div>
   </div>
 </div>
 
@@ -2740,6 +2779,51 @@ function showLockAfterSplash(){
       <div style="display:flex;gap:8px;margin-top:4px">
         <button class="btn bg" style="flex:1" onclick="pfSaveTreatment()">&#10003; Save</button>
         <button class="btn bo" style="flex:1" onclick="closeM('pf-treatment-modal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Patient File: Consent Form Modal -->
+<div id="pf-consent-modal" class="ov">
+  <div class="modal" style="max-width:480px;padding:0">
+    <div class="mhdr"><div class="mhdr-top"><span id="pf-consent-modal-title">📝 Consent Form</span><button onclick="closeM('pf-consent-modal')" class="btn bo sm">✕</button></div></div>
+    <div style="padding:16px;display:flex;flex-direction:column;gap:10px;max-height:78vh;overflow-y:auto">
+      <label style="font-size:12px;font-weight:600;color:#555">Language / ભાષા / भाषा</label>
+      <select id="pf-consent-lang" onchange="pfConsentApplyTemplate()" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px;background:#fff;color:#222">
+        <option value="en">English</option>
+        <option value="gu">ગુજરાતી (Gujarati)</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+      </select>
+      <label style="font-size:12px;font-weight:600;color:#555">Procedure Template</label>
+      <select id="pf-consent-template" onchange="pfConsentApplyTemplate()" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px;background:#fff;color:#222">
+        <option value="">-- Select template (optional) --</option>
+        <option value="extraction">Tooth Extraction</option>
+        <option value="rct">Root Canal Treatment (RCT)</option>
+        <option value="scaling">Scaling &amp; Polishing</option>
+        <option value="implant">Dental Implant</option>
+        <option value="surgery">Oral Surgery</option>
+        <option value="general">General Dental Treatment</option>
+      </select>
+      <label style="font-size:12px;font-weight:600;color:#555">Procedure Name</label>
+      <input id="pf-consent-procedure" placeholder="e.g. Extraction of #16" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px"/>
+      <label style="font-size:12px;font-weight:600;color:#555">Doctor</label>
+      <select id="pf-consent-doctor" onchange="handleDoctorDropdown('pf-consent-doctor')" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:13px;background:#fff;color:#222;width:100%"></select>
+      <label style="font-size:12px;font-weight:600;color:#555">Consent Text (editable)</label>
+      <textarea id="pf-consent-text" rows="10" style="padding:8px 10px;border:1px solid #cdd5dd;border-radius:6px;font-size:12px;resize:vertical;line-height:1.5;min-height:220px;flex-shrink:0"></textarea>
+
+      <label style="font-size:12px;font-weight:600;color:#555">Patient Signature</label>
+      <div style="border:1.5px dashed #cdd5dd;border-radius:8px;background:#fafcfd;overflow:hidden;min-height:170px;flex-shrink:0">
+        <canvas id="pf-consent-sigpad" width="440" height="170" style="width:100%;height:170px;min-height:170px;display:block;cursor:crosshair;touch-action:none"></canvas>
+      </div>
+      <div style="font-size:10px;color:#999">Sign above with finger / stylus / mouse.</div>
+      <button class="btn bo sm" onclick="pfConsentClearSig()">🧹 Clear Signature</button>
+
+      <input id="pf-consent-edit-id" type="hidden" value=""/>
+      <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">
+        <button class="btn bg" style="flex:1;min-width:90px" onclick="pfSaveConsent()">&#10003; Save</button>
+        <button class="btn bo" style="flex:1;min-width:90px" onclick="pfSaveConsent(true)">🖨️ Save &amp; Print</button>
+        <button class="btn bo" style="flex:1;min-width:90px" onclick="closeM('pf-consent-modal')">Cancel</button>
       </div>
     </div>
   </div>
@@ -3565,6 +3649,7 @@ function showLockAfterSplash(){
               <button class="btn bp sm" style="width:100%" onclick="sbPushTable('niva_appointments','appointments')">&#128197; Appts</button>
               <button class="btn bp sm" style="width:100%" onclick="sbPushTable('niva_expenses','expenses')">&#128176; Expenses</button>
               <button class="btn bp sm" style="width:100%" onclick="sbPushTable('niva_patient_files','patientFiles')">&#128101; Patients</button>
+              <button class="btn bp sm" style="width:100%" onclick="sbPushTable('niva_stock','stock')">&#128230; Stock</button>
               <button class="btn bp sm" style="width:100%" onclick="sbPushLogo(document.getElementById('sb-push-msg'))">&#128444; Logo</button>
               <button class="btn bp sm" style="width:100%" onclick="(function(){var m=document.getElementById('sb-push-msg');if(m){m.style.display='block';m.style.color='var(--pri)';m.textContent=' Clinic info push...';}window.sbSyncClinic&&window.sbSyncClinic().then(function(){if(m){m.style.color='#1b6e35';m.textContent=' Clinic info pushed to Supabase!';}}).catch(function(e){if(m){m.style.color='#c0392b';m.textContent=' '+e.message;}});})()">&#127968; Clinic Info</button>
             </div>
@@ -3581,6 +3666,7 @@ function showLockAfterSplash(){
               <button class="btn bo sm" style="width:100%" onclick="sbPullTable('niva_appointments','appointments')">&#128197; Appts</button>
               <button class="btn bo sm" style="width:100%" onclick="sbPullTable('niva_expenses','expenses')">&#128176; Expenses</button>
               <button class="btn bo sm" style="width:100%" onclick="sbPullTable('niva_patient_files','patientFiles')">&#128101; Patients</button>
+              <button class="btn bo sm" style="width:100%" onclick="sbPullTable('niva_stock','stock')">&#128230; Stock</button>
               <button class="btn bo sm" style="width:100%" onclick="sbPullLogo(document.getElementById('sb-pull-msg'))">&#128444; Logo</button>
               <button class="btn bo sm" style="width:100%" onclick="window.sbPullClinic&&window.sbPullClinic(document.getElementById('sb-pull-msg'))">&#127968; Clinic Info</button>
             </div>
@@ -4158,6 +4244,7 @@ function showLockAfterSplash(){
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-patientfile" checked style="accent-color:var(--pri)"> Patient File</label>
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-appointments" checked style="accent-color:var(--pri)"> Appointments</label>
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-prescription" checked style="accent-color:var(--pri)"> Prescription</label>
+                <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-stock" style="accent-color:var(--pri)"> Stock</label>
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-viewbills" style="accent-color:var(--pri)"> Cash Book</label>
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-expenses" style="accent-color:var(--pri)"> Expenses</label>
                 <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:5px 8px;border-radius:6px;border:1px solid #e0e8ee;background:#fff"><input type="checkbox" id="sp-reports" style="accent-color:var(--pri)"> Reports</label>
@@ -4746,7 +4833,7 @@ function showLockAfterSplash(){
       </div>
       <div class="mbtns">
         <button class="btn brec sm" onclick="showRec()">&#128203; Receipt</button>
-        <button class="btn bp sm" onclick="doPrint()">&#128438; Print</button>
+        <button class="btn bp sm" onclick="doPrint()">&#128424; Print</button>
         <button class="btn bwa sm" onclick="openShareModal('bill')">&#128242; WhatsApp</button>
         <button class="btn bsms sm" onclick="sendSMSBill()">&#128172; SMS</button>
         <button class="btn sm" onclick="shareGoogleReview(ab&&ab.id)" style="background:#fbbc04;color:#222;font-weight:700">&#11088; Review</button>
@@ -5153,7 +5240,36 @@ function showLockAfterSplash(){
 <script>
 </script>
 <script>
-//  DEFAULT SETTINGS 
+/* ============================================================================
+   NIVA DENTAL -- CODE MAP / TABLE OF CONTENTS
+   ----------------------------------------------------------------------------
+   This is ONE file (no build step, no bundler) -- kept as a single file on
+   purpose for GitHub Pages + Android WebView deployment simplicity.
+   To jump to a section: Ctrl+F (or your editor's search) for the exact
+   tag shown below, e.g. search for  #SEC:DOCTORS
+
+   #SEC:SETTINGS        -- default settings, load/save, theme, topbar
+   #SEC:STORAGE          -- IndexedDB + localStorage dual-write layer
+   #SEC:SYNC-CORE        -- audit trail + version-aware conflict detection
+   #SEC:APPOINTMENTS     -- appointment storage, modal, render, follow-ups
+   #SEC:BILLING          -- build bill/receipt HTML, templates, renumber
+   #SEC:SHARE            -- WhatsApp/SMS share, Google review share
+   #SEC:PRINT            -- universal print helper (iframe preview)
+   #SEC:PRESCRIPTION     -- prescription module, AI medicine search, history
+   #SEC:CONSENT          -- patient consent form (digital signature + print)
+   #SEC:STOCK            -- clinic inventory / stock tracker (quick add, expiry)
+   #SEC:PENDING-DUES     -- overall pending dues detail modal
+   #SEC:FIREBASE-CORE    -- fbGET/fbPUT/fbPATCH, clinic info path
+   #SEC:SECURITY         -- password hashing, migration, PIN/lock screen
+   #SEC:DOCTORS          -- doctor list save/render + Firebase push
+   #SEC:SYNC-QUEUE       -- offline write queue (NivaQ: qAdd/qFlush)
+
+   When adding a new major feature, add a new #SEC: tag + one line here so
+   this index stays useful. Tags are just comments -- safe to add/remove
+   freely, they don't affect app behavior.
+   ============================================================================ */
+
+//  DEFAULT SETTINGS  #SEC:SETTINGS
 const DEF_CLINIC={name:'',addr:'',phone:'',email:'',doctor:'',reg:'',tag:'',gst:'',web:'',reviewurl:''};
 const DEF_THEME={color:'#0d6b8a'};
 const DEF_BILLING={showGst:false,showDoctor:true,showDiag:true,autoPrint:false,showDisc:true,prefix:'RCP',currency:''};
@@ -5164,7 +5280,7 @@ const THEMES=[
   {name:'Deep Teal',color:'#0e7a6a'},{name:'Indigo',color:'#3949ab'},
 ];
 
-//  LOAD / SAVE SETTINGS 
+//  LOAD / SAVE SETTINGS  #SEC:SETTINGS
 function loadSettings(){
   try{return JSON.parse(localStorage.getItem('niva_settings')||'null');}catch(e){return null;}
 }
@@ -5401,7 +5517,7 @@ window.addEventListener("resize",function(){updateTopbar();},false);// =========
 // ==============================================================================
 const _IDB_NAME    = 'niva_dental_db';
 const _IDB_VER     = 3; // bumped: fixes patientFiles->patient_files store name mismatch
-const _IDB_STORES  = ['bills','appointments','expenses','patient_files','prescriptions','med_directory','kv'];
+const _IDB_STORES  = ['bills','appointments','expenses','patient_files','prescriptions','med_directory','consent_forms','stock','kv'];
 // 'kv' store = key-value (settings, logo, config, templates, etc.)
 
 let _idb = null; // IDB connection -- null until opened
@@ -5496,7 +5612,7 @@ function idbKVGet(key){
   }));
 }
 
-//  Migrate existing localStorage data into IDB (one-time, on first load) 
+//  Migrate existing localStorage data into IDB (one-time, on first load)  #SEC:STORAGE
 function _idbMigrateFromLS(){
   return _idbOpen().then(db=>new Promise(resolve=>{
     // Check if already migrated
@@ -5715,7 +5831,9 @@ var NIVA_TEXT_FIELDS = {
   appointments: ['patient','phone','doctor','purpose','notes','additionalDetail'],
   patientFiles: ['name','phone','age','gender','address','notes'],
   prescriptions:['patient','age','phone','doctor','diag','advice','legal'],
-  expenses:     ['vendor','desc','ref','notes','cat','mode']
+  expenses:     ['vendor','desc','ref','notes','cat','mode'],
+  consent_forms:['patientName','phone','doctor','procedure','text'],
+  stock:        ['item','qtyPkt','other']
 };
 
 function nivaSanitizeArray(arr, storeKey){
@@ -5803,7 +5921,7 @@ function nivaStampArray(arr){
   return arr;
 }
 
-//  Audit trail 
+//  Audit trail  #SEC:SYNC-CORE
 // Capped, append-only log of who changed what and when. Stored via the same
 // IDB 'kv' store used for settings (see idbKVGet/idbKVSet above), with a
 // localStorage mirror for instant read on boot -- same dual-write pattern as
@@ -5963,7 +6081,7 @@ function gid(){
   return px+'-'+String(n).padStart(pad,'0');
 }
 
-//  APPOINTMENTS STORAGE 
+//  APPOINTMENTS STORAGE  #SEC:APPOINTMENTS
 let appointments=[];
 try{appointments=JSON.parse(localStorage.getItem('niva_appointments')||'[]');}catch(e){}
 // One-time dedup of any duplicates already in storage
@@ -6498,7 +6616,7 @@ function resetBillNo(){
   document.getElementById('nb-billno').placeholder='Auto -> '+gid();
 }
 
-//  BUILD BILL HTML 
+//  BUILD BILL HTML  #SEC:BILLING
 function buildBill(b, forPrint){
   // Sanitize numeric fields -- old bills may be missing these
   b.consult = b.consult||0;
@@ -6659,7 +6777,7 @@ function openBill(b){ab=b;document.getElementById('bmodal-title').textContent='B
 function showRec(){if(!ab)return;document.getElementById('rec-id').textContent=ab.id;document.getElementById('rcontent').innerHTML=buildReceipt(ab);openM('rmodal');}
 function openRecDirect(id){const b=bills.find(x=>x.id===id);if(!b)return;ab=b;document.getElementById('rec-id').textContent=b.id;document.getElementById('rcontent').innerHTML=buildReceipt(b);openM('rmodal');}
 
-//  WHATSAPP & SMS SHARE 
+//  WHATSAPP & SMS SHARE  #SEC:SHARE
 let waShareType='bill';
 
 function buildBillWAMsg(b){
@@ -7615,7 +7733,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;color:#222;font-size:${fs}pt;backgr
 <script>window.onload=()=>window.print();<\/script></body></html>`;
 }
 
-//  Universal print helper 
+//  Universal print helper  #SEC:PRINT
 function openPrintWindow(html){
   // Ensure UTF-8
   if(html.indexOf('<meta charset')===-1){
@@ -8632,9 +8750,7 @@ function exportPDF(){
   <script>window.onload=function(){window.print();}<\/script>
 </body></html>`;
 
-  const w=window.open('','_blank');
-  if(w){w.document.write(html);w.document.close();}
-  else{openPrintWindow(html);}
+  openPrintWindow(html);
 }
 
 function dl(content,filename,type){
@@ -9968,7 +10084,7 @@ function openTodayCollectedDetail(){
   openM('today-collected-modal');
 }
 
-//  OVERALL PENDING DUES DETAIL MODAL 
+//  OVERALL PENDING DUES DETAIL MODAL  #SEC:PENDING-DUES
 window._allPendingRows = [];
 
 function openOverallPendingDetail(){
@@ -10309,7 +10425,7 @@ function confirmReschedule(id){
   alert('✅ Appointment rescheduled!\nNew date: '+new Date(newDate).toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}));
 }
 
-//  PRESCRIPTION MODULE 
+//  PRESCRIPTION MODULE  #SEC:PRESCRIPTION
 let prescriptions=[];
 try{prescriptions=JSON.parse(localStorage.getItem('niva_prescriptions')||'[]');}catch(e){}
 function svRx(){
@@ -11272,6 +11388,421 @@ function deleteRx(id){
   if(typeof nivaAudit==='function') nivaAudit('delete','prescriptions',id,'Prescription deleted for '+rx.patient);
 }
 
+//  CONSENT FORM MODULE (patient consent + digital signature, print option)  #SEC:CONSENT
+let consentForms=[];
+try{consentForms=JSON.parse(localStorage.getItem('niva_consent_forms')||'[]');}catch(e){}
+function svConsent(){
+  if(typeof nivaSanitizeArray==='function') nivaSanitizeArray(consentForms,'consent_forms');
+  try{localStorage.setItem('niva_consent_forms',JSON.stringify(consentForms));}catch(e){}
+  idbSaveAll('consent_forms',consentForms).catch(e=>console.warn('[NivaIDB] svConsent:',e));
+}
+
+function fbSyncConsent(c,_isRetry){
+  const F={...DEF_FB,...(CFG.firebase||{})};
+  if(!F.dburl) return Promise.resolve(false);
+  const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
+  if(_syncT.autosync===false) return Promise.resolve(false);
+  if(!c.updatedAt) c.updatedAt=Date.now();
+  const data={};data[fbSafeKey(c.id)]={...c,updatedAt:c.updatedAt};
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('consent',c);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('consent_forms',data).then(()=>{fbFlashSynced();return true;}).catch(err=>{
+    console.warn('FB consent sync:',err.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('consent',c);
+    return false;
+  });
+}
+function fbDeleteConsent(id){
+  const F={...DEF_FB,...(CFG.firebase||{})};
+  if(!F.dburl) return;
+  fbPUT('consent_forms/'+fbSafeKey(id),null).catch(e=>console.warn('FB consent delete:',e.message));
+}
+
+// -- Consent text templates, per language (editable after applying -- starting points, not fixed legal text) --
+const NIVA_CONSENT_LABELS = {
+  en:{extraction:'Tooth Extraction',rct:'Root Canal Treatment (RCT)',scaling:'Scaling & Polishing',implant:'Dental Implant',surgery:'Oral Surgery',general:'General Dental Treatment'},
+  gu:{extraction:'દાંત નિષ્કર્ષણ (Extraction)',rct:'રૂટ કેનાલ ટ્રીટમેન્ટ (RCT)',scaling:'સ્કેલિંગ અને પોલિશિંગ',implant:'ડેન્ટલ ઇમ્પ્લાન્ટ',surgery:'ઓરલ સર્જરી',general:'સામાન્ય દાંતની સારવાર'},
+  hi:{extraction:'दांत निष्कर्षण (Extraction)',rct:'रूट कैनाल ट्रीटमेंट (RCT)',scaling:'स्केलिंग एवं पॉलिशिंग',implant:'डेंटल इम्प्लांट',surgery:'ओरल सर्जरी',general:'सामान्य दंत चिकित्सा'}
+};
+const NIVA_CONSENT_TEMPLATES = {
+  en:{
+    extraction:'I hereby give my consent for extraction of the tooth/teeth as advised by the doctor. The procedure, its risks (pain, swelling, bleeding, infection, delayed healing), alternatives, and expected benefits have been explained to me in a language I understand. I have had the opportunity to ask questions and they have been answered to my satisfaction. I agree to follow post-procedure instructions given by the clinic.',
+    rct:'I hereby give my consent for Root Canal Treatment (RCT) as advised by the doctor. I understand this may require multiple visits, and that risks include instrument fracture, incomplete healing, or need for re-treatment/extraction in rare cases. Alternatives (including extraction) and expected benefits have been explained to me. I agree to complete the full course of treatment and follow-up as advised.',
+    scaling:'I hereby give my consent for Scaling & Polishing (professional teeth cleaning) as advised by the doctor. I understand mild sensitivity or gum bleeding may occur temporarily after the procedure. The procedure and its benefits have been explained to me to my satisfaction.',
+    implant:'I hereby give my consent for Dental Implant placement as advised by the doctor. I understand the risks (infection, implant failure, nerve/sinus involvement in rare cases, need for bone grafting), the surgical nature of the procedure, alternatives (bridge/denture), and the expected benefits and long-term care required. I have had my questions answered to my satisfaction.',
+    surgery:'I hereby give my consent for the oral surgical procedure as advised by the doctor. I understand the risks associated with surgery (bleeding, infection, swelling, delayed healing, and rare risks specific to this procedure), the alternatives available, and the expected benefits. I have had the opportunity to ask questions and they have been answered to my satisfaction.',
+    general:'I hereby give my consent for the dental treatment/procedure as advised and explained to me by the doctor, including its risks, alternatives, and expected benefits. I have had the opportunity to ask questions and they have been answered to my satisfaction. I agree to follow the post-treatment instructions given by the clinic.'
+  },
+  gu:{
+    extraction:'હું દાંત/દાંતોના નિષ્કર્ષણ (Extraction) માટે મારી સંમતિ આપું છું, જેમ કે ડોક્ટર દ્વારા સલાહ આપવામાં આવી છે. પ્રક્રિયા, તેના જોખમો (દુખાવો, સોજો, રક્તસ્ત્રાવ, ચેપ, રૂઝ આવવામાં વિલંબ), વિકલ્પો અને અપેક્ષિત ફાયદાઓ મને સમજાય તેવી ભાષામાં સમજાવવામાં આવ્યા છે. મને પ્રશ્નો પૂછવાની તક મળી છે અને તેમના જવાબ મારા સંતોષ મુજબ આપવામાં આવ્યા છે. હું પ્રક્રિયા પછીની સૂચનાઓનું પાલન કરવા સંમત છું.',
+    rct:'હું રૂટ કેનાલ ટ્રીટમેન્ટ (RCT) માટે મારી સંમતિ આપું છું, જેમ કે ડોક્ટર દ્વારા સલાહ આપવામાં આવી છે. મને સમજાય છે કે આ માટે એક કરતાં વધુ મુલાકાતોની જરૂર પડી શકે છે, અને જોખમોમાં સાધન તૂટવું, અપૂર્ણ રૂઝ અથવા દુર્લભ કિસ્સાઓમાં ફરીથી સારવાર/નિષ્કર્ષણની જરૂરિયાતનો સમાવેશ થાય છે. વિકલ્પો (નિષ્કર્ષણ સહિત) અને અપેક્ષિત ફાયદાઓ મને સમજાવવામાં આવ્યા છે. હું સંપૂર્ણ સારવાર અને સૂચિત ફોલો-અપ પૂર્ણ કરવા સંમત છું.',
+    scaling:'હું સ્કેલિંગ અને પોલિશિંગ (વ્યવસાયિક દાંતની સફાઈ) માટે મારી સંમતિ આપું છું, જેમ કે ડોક્ટર દ્વારા સલાહ આપવામાં આવી છે. મને સમજાય છે કે પ્રક્રિયા પછી થોડા સમય માટે સંવેદનશીલતા અથવા પેઢામાંથી રક્તસ્ત્રાવ થઈ શકે છે. પ્રક્રિયા અને તેના ફાયદાઓ મને મારા સંતોષ મુજબ સમજાવવામાં આવ્યા છે.',
+    implant:'હું ડેન્ટલ ઇમ્પ્લાન્ટ મૂકવા માટે મારી સંમતિ આપું છું, જેમ કે ડોક્ટર દ્વારા સલાહ આપવામાં આવી છે. મને જોખમો (ચેપ, ઇમ્પ્લાન્ટ નિષ્ફળતા, દુર્લભ કિસ્સાઓમાં નર્વ/સાઇનસ સંડોવણી, બોન ગ્રાફ્ટિંગની જરૂરિયાત), પ્રક્રિયાની સર્જિકલ પ્રકૃતિ, વિકલ્પો (બ્રિજ/ડેન્ચર) અને લાંબા ગાળાની જરૂરી કાળજી સમજાવવામાં આવી છે. મારા પ્રશ્નોના જવાબ મારા સંતોષ મુજબ આપવામાં આવ્યા છે.',
+    surgery:'હું ડોક્ટર દ્વારા સલાહ આપવામાં આવેલી ઓરલ સર્જિકલ પ્રક્રિયા માટે મારી સંમતિ આપું છું. મને સર્જરી સાથે સંકળાયેલા જોખમો (રક્તસ્ત્રાવ, ચેપ, સોજો, રૂઝ આવવામાં વિલંબ, અને આ પ્રક્રિયા માટે વિશિષ્ટ દુર્લભ જોખમો), ઉપલબ્ધ વિકલ્પો અને અપેક્ષિત ફાયદાઓ સમજાવવામાં આવ્યા છે. મને પ્રશ્નો પૂછવાની તક મળી છે અને તેમના જવાબ મારા સંતોષ મુજબ આપવામાં આવ્યા છે.',
+    general:'હું ડોક્ટર દ્વારા સલાહ આપવામાં અને સમજાવવામાં આવેલી દાંતની સારવાર/પ્રક્રિયા માટે મારી સંમતિ આપું છું, જેમાં તેના જોખમો, વિકલ્પો અને અપેક્ષિત ફાયદાઓનો સમાવેશ થાય છે. મને પ્રશ્નો પૂછવાની તક મળી છે અને તેમના જવાબ મારા સંતોષ મુજબ આપવામાં આવ્યા છે. હું ક્લિનિક દ્વારા આપવામાં આવેલી સારવાર પછીની સૂચનાઓનું પાલન કરવા સંમત છું.'
+  },
+  hi:{
+    extraction:'मैं डॉक्टर की सलाह अनुसार दांत/दांतों के निष्कर्षण (Extraction) हेतु अपनी सहमति देता/देती हूं। प्रक्रिया, इसके जोखिम (दर्द, सूजन, रक्तस्राव, संक्रमण, देरी से घाव भरना), विकल्प और अपेक्षित लाभ मुझे समझ में आने वाली भाषा में समझाए गए हैं। मुझे प्रश्न पूछने का अवसर मिला है और उनके उत्तर मेरी संतुष्टि अनुसार दिए गए हैं। मैं प्रक्रिया के बाद दी गई सूचनाओं का पालन करने हेतु सहमत हूं।',
+    rct:'मैं डॉक्टर की सलाह अनुसार रूट कैनाल ट्रीटमेंट (RCT) हेतु अपनी सहमति देता/देती हूं। मुझे समझ है कि इसके लिए एक से अधिक विजिट की आवश्यकता हो सकती है, और जोखिमों में इंस्ट्रूमेंट टूटना, अधूरा उपचार, या दुर्लभ मामलों में पुनः उपचार/निष्कर्षण की आवश्यकता शामिल है। विकल्प (निष्कर्षण सहित) और अपेक्षित लाभ मुझे समझाए गए हैं। मैं पूर्ण उपचार और सुझाए गए फॉलो-अप को पूरा करने हेतु सहमत हूं।',
+    scaling:'मैं डॉक्टर की सलाह अनुसार स्केलिंग एवं पॉलिशिंग (व्यावसायिक दांत सफाई) हेतु अपनी सहमति देता/देती हूं। मुझे समझ है कि प्रक्रिया के बाद कुछ समय के लिए संवेदनशीलता या मसूड़ों से हल्का रक्तस्राव हो सकता है। प्रक्रिया और इसके लाभ मुझे मेरी संतुष्टि अनुसार समझाए गए हैं।',
+    implant:'मैं डॉक्टर की सलाह अनुसार डेंटल इम्प्लांट लगाने हेतु अपनी सहमति देता/देती हूं। मुझे जोखिम (संक्रमण, इम्प्लांट विफलता, दुर्लभ मामलों में नर्व/साइनस संबंधी जटिलता, बोन ग्राफ्टिंग की आवश्यकता), प्रक्रिया की शल्य चिकित्सा प्रकृति, विकल्प (ब्रिज/डेन्चर) और आवश्यक दीर्घकालिक देखभाल समझाई गई है। मेरे प्रश्नों के उत्तर मेरी संतुष्टि अनुसार दिए गए हैं।',
+    surgery:'मैं डॉक्टर की सलाह अनुसार ओरल सर्जिकल प्रक्रिया हेतु अपनी सहमति देता/देती हूं। मुझे सर्जरी से जुड़े जोखिम (रक्तस्राव, संक्रमण, सूजन, देरी से घाव भरना, और इस प्रक्रिया के विशिष्ट दुर्लभ जोखिम), उपलब्ध विकल्प और अपेक्षित लाभ समझाए गए हैं। मुझे प्रश्न पूछने का अवसर मिला है और उनके उत्तर मेरी संतुष्टि अनुसार दिए गए हैं।',
+    general:'मैं डॉक्टर द्वारा सुझाई गई और समझाई गई दंत चिकित्सा/प्रक्रिया हेतु अपनी सहमति देता/देती हूं, जिसमें इसके जोखिम, विकल्प और अपेक्षित लाभ शामिल हैं। मुझे प्रश्न पूछने का अवसर मिला है और उनके उत्तर मेरी संतुष्टि अनुसार दिए गए हैं। मैं क्लिनिक द्वारा दी गई उपचार पश्चात सूचनाओं का पालन करने हेतु सहमत हूं।'
+  }
+};
+const NIVA_CONSENT_PRINT_LABELS = {
+  en:{title:'Patient Consent Form', patient:'Patient', phone:'Phone', date:'Date', procedure:'Procedure', doctor:'Doctor', sig:'Patient Signature', staff:'Doctor / Clinic Staff'},
+  gu:{title:'દર્દી સંમતિ ફોર્મ', patient:'દર્દી', phone:'ફોન', date:'તારીખ', procedure:'પ્રક્રિયા', doctor:'ડોક્ટર', sig:'દર્દીની સહી', staff:'ડોક્ટર / ક્લિનિક સ્ટાફ'},
+  hi:{title:'रोगी सहमति फॉर्म', patient:'रोगी', phone:'फोन', date:'दिनांक', procedure:'प्रक्रिया', doctor:'डॉक्टर', sig:'रोगी के हस्ताक्षर', staff:'डॉक्टर / क्लिनिक स्टाफ'}
+};
+
+function pfConsentApplyTemplate(){
+  const key=document.getElementById('pf-consent-template').value;
+  if(!key) return;
+  const lang=document.getElementById('pf-consent-lang').value||'en';
+  const labelMap=NIVA_CONSENT_LABELS[lang]||NIVA_CONSENT_LABELS.en;
+  document.getElementById('pf-consent-procedure').value=labelMap[key]||'';
+  document.getElementById('pf-consent-text').value=(NIVA_CONSENT_TEMPLATES[lang]||NIVA_CONSENT_TEMPLATES.en)[key]||'';
+}
+
+// -- Signature pad (pointer events cover mouse + touch + stylus in one code path) --
+let _pfSigCtx=null, _pfSigDrawing=false, _pfSigHasInk=false, _pfSigWired=false;
+function _pfSigPos(canvas,ev){
+  const r=canvas.getBoundingClientRect();
+  const scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  return {x:(ev.clientX-r.left)*scaleX, y:(ev.clientY-r.top)*scaleY};
+}
+function pfWireSignaturePad(){
+  const canvas=document.getElementById('pf-consent-sigpad');
+  if(!canvas) return;
+  _pfSigCtx=canvas.getContext('2d');
+  _pfSigCtx.lineWidth=2.2;
+  _pfSigCtx.lineCap='round';
+  _pfSigCtx.strokeStyle='#1a2433';
+  if(_pfSigWired) return; // wire event listeners only once per canvas element
+  _pfSigWired=true;
+  const start=(ev)=>{
+    ev.preventDefault();
+    _pfSigDrawing=true;
+    const p=_pfSigPos(canvas,ev);
+    _pfSigCtx.beginPath();
+    _pfSigCtx.moveTo(p.x,p.y);
+  };
+  const move=(ev)=>{
+    if(!_pfSigDrawing) return;
+    ev.preventDefault();
+    const p=_pfSigPos(canvas,ev);
+    _pfSigCtx.lineTo(p.x,p.y);
+    _pfSigCtx.stroke();
+    _pfSigHasInk=true;
+  };
+  const end=()=>{ _pfSigDrawing=false; };
+  canvas.addEventListener('pointerdown',start);
+  canvas.addEventListener('pointermove',move);
+  window.addEventListener('pointerup',end);
+  canvas.addEventListener('pointerleave',end);
+}
+function pfConsentClearSig(){
+  const canvas=document.getElementById('pf-consent-sigpad');
+  if(!canvas||!_pfSigCtx) return;
+  _pfSigCtx.clearRect(0,0,canvas.width,canvas.height);
+  _pfSigHasInk=false;
+}
+
+function pfOpenAddConsent(){
+  const p=patientFiles.find(x=>x.id===pfCurrentPatientId);
+  if(!p){alert('Please open a patient first.');return;}
+  document.getElementById('pf-consent-edit-id').value='';
+  document.getElementById('pf-consent-lang').value='en';
+  document.getElementById('pf-consent-template').value='';
+  document.getElementById('pf-consent-procedure').value='';
+  document.getElementById('pf-consent-text').value='';
+  populateAllDoctorDropdowns('pf-consent-doctor', CFG.clinic.doctor||'');
+  openM('pf-consent-modal');
+  // Canvas isn't visible/sized until the modal is shown, so wire + clear after paint
+  setTimeout(function(){ pfWireSignaturePad(); pfConsentClearSig(); },50);
+}
+
+function pfSaveConsent(alsoPrint){
+  const p=patientFiles.find(x=>x.id===pfCurrentPatientId);
+  if(!p){alert('Please open a patient first.');return;}
+  const procedure=(document.getElementById('pf-consent-procedure').value||'').trim();
+  const text=(document.getElementById('pf-consent-text').value||'').trim();
+  const doctor=document.getElementById('pf-consent-doctor').value||'';
+  const lang=document.getElementById('pf-consent-lang').value||'en';
+  if(!procedure){alert('Please enter the procedure name.');return;}
+  if(!text){alert('Please enter/select the consent text.');return;}
+  if(!_pfSigHasInk){alert('Patient signature is required. Please sign in the box above.');return;}
+  const canvas=document.getElementById('pf-consent-sigpad');
+  const sigData=canvas.toDataURL('image/png',0.9);
+  const editId=document.getElementById('pf-consent-edit-id').value;
+  const now=Date.now();
+  let rec;
+  if(editId){
+    rec=consentForms.find(x=>x.id===editId);
+    if(rec){ rec.procedure=procedure; rec.text=text; rec.doctor=doctor; rec.lang=lang; rec.sigData=sigData; rec.updatedAt=now; }
+  }
+  if(!rec){
+    rec={
+      id:'CF'+now+Math.floor(Math.random()*1000),
+      patientId:p.id, patientName:p.name, phone:p.phone||'',
+      procedure, doctor, text, lang, sigData,
+      date:new Date().toISOString().slice(0,10),
+      createdAt:now, updatedAt:now
+    };
+    consentForms.unshift(rec);
+  }
+  svConsent();
+  fbSyncConsent(rec);
+  if(typeof nivaAudit==='function') nivaAudit(editId?'update':'create','consent_forms',rec.id,'Consent form ('+procedure+') for '+p.name);
+  pfRenderConsents(p);
+  closeM('pf-consent-modal');
+  if(alsoPrint===true){
+    setTimeout(function(){ pfPrintConsentById(rec.id); },100);
+  } else {
+    alert('✓ Consent form saved.');
+  }
+}
+
+function pfRenderConsents(p){
+  const el=document.getElementById('pf-consents');
+  if(!el) return;
+  const list=consentForms.filter(c=>c.patientId===p.id);
+  if(!list.length){
+    el.innerHTML='<div style="font-size:11px;color:#999;padding:6px 2px">No consent forms saved for this patient yet.</div>';
+    return;
+  }
+  el.innerHTML=`<div style="font-size:12px;font-weight:700;color:#555;margin:10px 0 6px">📝 Consent Forms (${list.length})</div>` +
+    list.map(c=>`
+    <div style="background:#faf7fd;border:1px solid #e7d9f2;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px">
+        <strong>${c.procedure}</strong>
+        <span style="color:#888;font-size:11px">${c.date?new Date(c.date).toLocaleDateString('en-IN'):''}</span>
+      </div>
+      ${c.doctor?`<div style="color:#666;font-size:11px;margin-top:2px">Dr. ${c.doctor}</div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn bp sm" onclick="pfPrintConsentById('${c.id}')">&#128438; Print</button>
+        <button class="btn bwa sm" onclick="pfShareConsentWA('${c.id}')">&#128242; WA</button>
+        <button class="btn bd sm" onclick="pfDeleteConsent('${c.id}')">&#128465;</button>
+      </div>
+    </div>`).join('');
+}
+
+function pfPrintConsentById(id){
+  const c=consentForms.find(x=>x.id===id);if(!c)return;
+  const C=CFG.clinic||{};
+  const L=NIVA_CONSENT_PRINT_LABELS[c.lang]||NIVA_CONSENT_PRINT_LABELS.en;
+  const dateStr=c.date?new Date(c.date).toLocaleDateString('en-IN'):'';
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${L.title} - ${c.patientName}</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,'Noto Sans Gujarati','Noto Sans Devanagari',sans-serif;padding:16mm 14mm;color:#222;font-size:12.5px;line-height:1.8}
+  .hdr{text-align:center;border-bottom:2px solid var(--pri,#0d6b8a);padding-bottom:10px;margin-bottom:16px}
+  .cname{font-size:19px;font-weight:900;color:var(--pri,#0d6b8a)}
+  .caddr{font-size:11px;color:#555;margin-top:2px}
+  .title{font-size:15px;font-weight:800;text-align:center;margin:14px 0;letter-spacing:.5px}
+  .row{display:flex;gap:24px;margin-bottom:10px;flex-wrap:wrap;font-size:12px}
+  .row b{color:#333}
+  .txt{background:#f7fafd;border:1px solid #e0e8ee;border-radius:8px;padding:14px;margin:14px 0;white-space:pre-wrap}
+  .sigbox{margin-top:26px;display:flex;justify-content:center;align-items:flex-end}
+  .sigline{border-top:1px solid #333;padding-top:6px;font-size:12px;text-align:center;width:340px;min-height:100px;display:flex;flex-direction:column;justify-content:flex-end}
+  @media print{@page{margin:0;size:A4 portrait}body{padding:16mm 14mm}}
+  </style></head><body>
+  <div class="hdr"><div class="cname">${C.name||''}</div><div class="caddr">${C.addr||''}${C.phone?' | '+C.phone:''}</div></div>
+  <div class="title">${L.title}</div>
+  <div class="row"><span><b>${L.patient}:</b> ${c.patientName}</span>${c.phone?`<span><b>${L.phone}:</b> ${c.phone}</span>`:''}<span><b>${L.date}:</b> ${dateStr}</span></div>
+  <div class="row"><span><b>${L.procedure}:</b> ${c.procedure}</span>${c.doctor?`<span><b>${L.doctor}:</b> Dr. ${c.doctor}</span>`:''}</div>
+  <div class="txt">${(c.text||'').replace(/</g,'&lt;')}</div>
+  <div class="sigbox">
+    <div class="sigline">${c.sigData?`<img src="${c.sigData}" style="max-width:300px;max-height:110px;display:block;margin:0 auto 4px"/>`:''}${L.sig}</div>
+  </div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`;
+  openPrintWindow(html);
+}
+function pfShareConsentWA(id){
+  const c=consentForms.find(x=>x.id===id);if(!c)return;
+  const C=CFG.clinic||{};
+  const L=NIVA_CONSENT_PRINT_LABELS[c.lang]||NIVA_CONSENT_PRINT_LABELS.en;
+  const phone=(c.phone||'').replace(/\D/g,'').slice(-10);
+  const dateStr=c.date?new Date(c.date).toLocaleDateString('en-IN'):'';
+  const msg=`*${C.name||''}*\n*${L.title}* | ${dateStr}\n${L.patient}: *${c.patientName}*\n${L.procedure}: *${c.procedure}*${c.doctor?'\n'+L.doctor+': Dr. '+c.doctor:''}\n\nSigned consent on file at clinic.${C.phone?'\n_'+C.phone+'_':''}`;
+  const num=phone?'91'+phone:'';
+  window.open(num?`https://wa.me/${num}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function pfDeleteConsent(id){
+  const c=consentForms.find(x=>x.id===id);if(!c)return;
+  if(!confirm('Delete this consent form for '+c.patientName+'?'))return;
+  consentForms=consentForms.filter(x=>x.id!==id);
+  svConsent();
+  idbDelete('consent_forms',id).catch(e=>console.warn('[NivaIDB] consent delete:',e));
+  fbDeleteConsent(id);
+  if(typeof nivaAudit==='function') nivaAudit('delete','consent_forms',id,'Consent form deleted for '+c.patientName);
+  const p=patientFiles.find(x=>x.id===pfCurrentPatientId);
+  if(p) pfRenderConsents(p);
+}
+
+//  STOCK MODULE (clinic inventory -- quick add, expiry tracking)  #SEC:STOCK
+let stockItems=[];
+try{stockItems=JSON.parse(localStorage.getItem('niva_stock')||'[]');}catch(e){}
+function svStock(){
+  if(typeof nivaSanitizeArray==='function') nivaSanitizeArray(stockItems,'stock');
+  try{localStorage.setItem('niva_stock',JSON.stringify(stockItems));}catch(e){}
+  idbSaveAll('stock',stockItems).catch(e=>console.warn('[NivaIDB] svStock:',e));
+}
+
+function fbSyncStock(s,_isRetry){
+  const F={...DEF_FB,...(CFG.firebase||{})};
+  if(!F.dburl) return Promise.resolve(false);
+  const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
+  if(_syncT.autosync===false) return Promise.resolve(false);
+  if(!s.updatedAt) s.updatedAt=Date.now();
+  const data={};data[fbSafeKey(s.id)]={...s,updatedAt:s.updatedAt};
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('stock',s);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('stock',data).then(()=>{fbFlashSynced();return true;}).catch(err=>{
+    console.warn('FB stock sync:',err.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('stock',s);
+    return false;
+  });
+}
+function fbDeleteStock(id){
+  const F={...DEF_FB,...(CFG.firebase||{})};
+  if(!F.dburl) return;
+  fbPUT('stock/'+fbSafeKey(id),null).catch(e=>console.warn('FB stock delete:',e.message));
+}
+
+function openStockQuickAdd(editId){
+  document.getElementById('stock-edit-id').value='';
+  document.getElementById('stock-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('stock-item').value='';
+  document.getElementById('stock-qty').value='';
+  document.getElementById('stock-expiry').value='';
+  document.getElementById('stock-other').value='';
+  document.getElementById('stock-modal-title').textContent='+ Quick Add Stock';
+  if(editId){
+    const s=stockItems.find(x=>x.id===editId);
+    if(s){
+      document.getElementById('stock-edit-id').value=s.id;
+      document.getElementById('stock-date').value=s.date||'';
+      document.getElementById('stock-item').value=s.item||'';
+      document.getElementById('stock-qty').value=s.qtyPkt||'';
+      document.getElementById('stock-expiry').value=s.expiry||'';
+      document.getElementById('stock-other').value=s.other||'';
+      document.getElementById('stock-modal-title').textContent='✎ Edit Stock Item';
+    }
+  }
+  openM('stock-quick-modal');
+  setTimeout(function(){ document.getElementById('stock-item').focus(); },100);
+}
+
+function saveStockItem(){
+  const date=document.getElementById('stock-date').value||'';
+  const item=(document.getElementById('stock-item').value||'').trim();
+  const qtyPkt=(document.getElementById('stock-qty').value||'').trim();
+  const expiry=document.getElementById('stock-expiry').value||'';
+  const other=(document.getElementById('stock-other').value||'').trim();
+  if(!item){alert('Please enter the item name.');return;}
+  const editId=document.getElementById('stock-edit-id').value;
+  const now=Date.now();
+  let rec;
+  if(editId){
+    rec=stockItems.find(x=>x.id===editId);
+    if(rec){ rec.date=date; rec.item=item; rec.qtyPkt=qtyPkt; rec.expiry=expiry; rec.other=other; rec.updatedAt=now; }
+  }
+  if(!rec){
+    rec={id:'ST'+now+Math.floor(Math.random()*1000), date, item, qtyPkt, expiry, other, createdAt:now, updatedAt:now};
+    stockItems.unshift(rec);
+  }
+  svStock();
+  fbSyncStock(rec);
+  if(typeof nivaAudit==='function') nivaAudit(editId?'update':'create','stock',rec.id,'Stock item: '+item);
+  renderStock();
+  closeM('stock-quick-modal');
+}
+
+function deleteStockItem(id){
+  const s=stockItems.find(x=>x.id===id);if(!s)return;
+  if(!confirm('Delete stock item "'+s.item+'"?'))return;
+  stockItems=stockItems.filter(x=>x.id!==id);
+  svStock();
+  idbDelete('stock',id).catch(e=>console.warn('[NivaIDB] stock delete:',e));
+  fbDeleteStock(id);
+  if(typeof nivaAudit==='function') nivaAudit('delete','stock',id,'Stock item deleted: '+s.item);
+  renderStock();
+}
+
+function _stockExpiryMeta(s, todayStr, soonStr){
+  let expColor='#333', expTag='';
+  if(s.expiry){
+    if(s.expiry<todayStr){ expColor='#c0392b'; expTag=' ⚠️ Expired'; }
+    else if(s.expiry<=soonStr){ expColor='#d35400'; expTag=' ⏳ Soon'; }
+  }
+  return {expColor, expTag};
+}
+function _stockRowMobile(s, todayStr, soonStr){
+  const {expColor, expTag}=_stockExpiryMeta(s, todayStr, soonStr);
+  return `<div data-stock-id="${s.id}" style="background:#fff;border:1px solid #e0e8ee;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+        <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:6px">${s.item}</div>
+        <div style="display:flex;flex-direction:column;gap:4px;font-size:12px;color:#555">
+          <div style="display:flex;justify-content:space-between"><span style="color:#888">Date of Purchase</span><span>${s.date?new Date(s.date).toLocaleDateString('en-IN'):'--'}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#888">Qty/Pkt</span><span>${s.qtyPkt||'--'}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:#888">Expiry Date</span><span style="color:${expColor};font-weight:${expTag?'700':'400'}">${s.expiry?new Date(s.expiry).toLocaleDateString('en-IN'):'--'}${expTag}</span></div>
+          ${s.other?`<div style="display:flex;justify-content:space-between;gap:8px"><span style="color:#888;flex-shrink:0">Other</span><span style="text-align:right;color:#666">${s.other}</span></div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn bp sm" style="flex:1;font-size:13px;padding:10px 8px;text-align:center" onclick="openStockQuickAdd('${s.id}')">&#9998; Edit</button>
+          <button class="btn bd sm" style="flex:1;font-size:13px;padding:10px 8px;text-align:center" onclick="deleteStockItem('${s.id}')">&#128465; Delete</button>
+        </div>
+      </div>`;
+}
+function _stockRowDesktop(s, todayStr, soonStr){
+  const {expColor, expTag}=_stockExpiryMeta(s, todayStr, soonStr);
+  return `<tr style="border-bottom:1px solid #f0f3f5">
+        <td style="padding:8px 10px">${s.date?new Date(s.date).toLocaleDateString('en-IN'):'--'}</td>
+        <td style="padding:8px 10px;font-weight:700">${s.item}</td>
+        <td style="padding:8px 10px">${s.qtyPkt||'--'}</td>
+        <td style="padding:8px 10px;color:${expColor};font-weight:${expTag?'700':'400'}">${s.expiry?new Date(s.expiry).toLocaleDateString('en-IN'):'--'}${expTag}</td>
+        <td style="padding:8px 10px;color:#666;font-size:11px">${s.other||'--'}</td>
+        <td style="padding:8px 10px;white-space:nowrap">
+          <div class="acts">
+            <button class="btn bp sm" onclick="openStockQuickAdd('${s.id}')">&#9998; Edit</button>
+            <button class="btn bd sm" onclick="deleteStockItem('${s.id}')">&#128465;</button>
+          </div>
+        </td>
+      </tr>`;
+}
+function renderStock(){
+  const el=document.getElementById('stock-list');
+  if(!el) return;
+  const q=(document.getElementById('stock-search')&&document.getElementById('stock-search').value||'').toLowerCase();
+  const list=stockItems.filter(s=>!q||(s.item||'').toLowerCase().includes(q)||(s.other||'').toLowerCase().includes(q));
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:#aaa;font-size:12px">No stock items yet. Tap "+ Quick Add" to add one.</div>';
+    return;
+  }
+  const todayStr=new Date().toISOString().slice(0,10);
+  const soonStr=new Date(Date.now()+30*24*60*60*1000).toISOString().slice(0,10);
+
+  const isMobStock=window.innerWidth<=700;
+  if(isMobStock){
+    el.innerHTML=list.map(s=>_stockRowMobile(s,todayStr,soonStr)).join('');
+    return;
+  }
+
+  el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e0e8ee">
+    <thead><tr style="background:#f5f8fa">
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Date of Purchase</th>
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Item</th>
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Qty/Pkt</th>
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Expiry Date</th>
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Other</th>
+      <th style="padding:8px 10px;text-align:left;font-size:11px;color:#666;border-bottom:1px solid #e0e8ee">Actions</th>
+    </tr></thead>
+    <tbody>${list.map(s=>_stockRowDesktop(s,todayStr,soonStr)).join('')}</tbody></table>`;
+}
+
 function renderCB(){
   const q=(document.getElementById('cbq').value||'').toLowerCase();
   const m=document.getElementById('cbmd').value;
@@ -12046,14 +12577,22 @@ function getPaidDateValue(){
   if(ymd) return txt;
   return '';
 }
-function fbSyncExp(e){
+function fbSyncExp(e,_isRetry){
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
   const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
   if(_syncT.autosync===false) return;
   if(!e.updatedAt) e.updatedAt=Date.now();
   const data={};data[fbSafeKey(e.id)]={...e,updatedAt:e.updatedAt};
-  fbPATCH('expenses',data).then(()=>fbFlashSynced()).catch(err=>console.warn('FB exp sync:',err.message));
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('expense',e);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('expenses',data).then(()=>{fbFlashSynced();return true;}).catch(err=>{
+    console.warn('FB exp sync:',err.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('expense',e);
+    return false;
+  });
 }
 //  Prescriptions -- TRUE realtime push (rides the same shared SSE node as bills/expenses) 
 function fbSyncRx(rx){
@@ -12569,9 +13108,11 @@ function showTab(name,btn){
   // Hide FABs on settings/reports/prescription/expenses -- show only on billing-related tabs
   const _fabNewbill=document.getElementById('mob-fab-newbill');
   const _fabAppt=document.getElementById('mob-fab-appt');
+  const _fabStock=document.getElementById('mob-fab-stock');
   const _fabHide=['settings','reports','prescription','expenses','patientfile'];
   if(_fabNewbill) _fabNewbill.style.display=_fabHide.includes(name)?'none':'';
   if(_fabAppt) _fabAppt.style.display=_fabHide.includes(name)?'none':'';
+  if(_fabStock) _fabStock.style.display=_fabHide.includes(name)?'none':'';
   if(name==='settings'){loadClinicForm();renderThemeGrid();loadBillingForm();loadEmailForm();loadFBForm();loadPFForm();loadApptMsgForm();setTimeout(refreshSetActivationCard,50);showSetSection('clinic',document.querySelector('.setnav button:first-child'));}
   if(name==='expenses')renderExp();
   if(name==='reports'){setTimeout(()=>{
@@ -12583,6 +13124,7 @@ function showTab(name,btn){
     genRepCashBook();populateVendorChips();
   },100);}
   if(name==='prescription'){initRxTab();}
+  if(name==='stock'){renderStock();}
   if(name==='appointments'){renderApptTabFull();}
   if(name==='patientfile'){
     // Always reset to list view (hide detail if open)
@@ -13194,6 +13736,7 @@ function fbUrl(path){
   const uid = _fbAuthUid || 'shared';
   return `${base}/${key}/${uid}/${path}.json${qs}`;
 }
+//  FIREBASE CORE (GET/PUT/PATCH REST helpers)  #SEC:FIREBASE-CORE
 function fbGET(path){
   return fbSignIn().then(()=>
     fetch(fbUrl(path),{method:'GET',headers:{'Content-Type':'application/json'}})
@@ -13564,23 +14107,39 @@ function sanitizeBill(b){
   }));
 }
 function fbSafeKey(id){ return (id||'').replace(/[.#$[\]/]/g,'_'); }
-function fbSyncBill(b){
+function fbSyncBill(b,_isRetry){
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
   const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
   if(_syncT.autosync===false) return;
   if(!b.updatedAt) b.updatedAt=Date.now();
   const data={};data[fbSafeKey(b.id)]={...sanitizeBill(b),updatedAt:b.updatedAt};
-  fbPATCH('bills',data).then(()=>fbFlashSynced()).catch(e=>console.warn('FB sync:',e.message));
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('bill',b);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('bills',data).then(()=>{fbFlashSynced();return true;}).catch(e=>{
+    console.warn('FB sync:',e.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('bill',b);
+    return false;
+  });
 }
-function fbSyncAppt(a){
+function fbSyncAppt(a,_isRetry){
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
   const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
   if(_syncT.autosync===false) return;
   if(!a.updatedAt) a.updatedAt=Date.now();
   const data={};data[fbSafeKey(a.id)]={...sanitizeBill(a),updatedAt:a.updatedAt};
-  fbPATCH('appointments',data).then(()=>fbFlashSynced()).catch(e=>console.warn('FB appt sync:',e.message));
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('appt',a);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('appointments',data).then(()=>{fbFlashSynced();return true;}).catch(e=>{
+    console.warn('FB appt sync:',e.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('appt',a);
+    return false;
+  });
 }
 
 // Push all local appointments that are missing from Firebase
@@ -13596,7 +14155,7 @@ function fbSyncMissingAppts(remoteApptData){
   missing.forEach(a=>{ data[fbSafeKey(a.id)]={...sanitizeBill(a),updatedAt:a.updatedAt||a.createdAt||Date.now()}; });
   fbPATCH('appointments',data).catch(e=>console.warn('FB missing appt sync:',e.message));
 }
-function fbSyncPF(p){
+function fbSyncPF(p,_isRetry){
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
   const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
@@ -13610,7 +14169,15 @@ function fbSyncPF(p){
     });
   }
   const data={};data[fbSafeKey(p.id)]={..._pClean,updatedAt:p.updatedAt};
-  fbPATCH('patient_files',data).then(()=>fbFlashSynced()).catch(e=>console.warn('FB patient_files sync:',e.message));
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('pf',p);
+    return Promise.resolve(false);
+  }
+  return fbPATCH('patient_files',data).then(()=>{fbFlashSynced();return true;}).catch(e=>{
+    console.warn('FB patient_files sync:',e.message);
+    if(!_isRetry && typeof window.qAdd==='function') window.qAdd('pf',p);
+    return false;
+  });
 }
 function fbDeletePF(id){
   //  Mark as deleted so Firebase/Supabase pull never restores this patient 
@@ -13644,7 +14211,7 @@ function fbClinicInfoPath(){
   return 'clinic_info';
 }
 
-function fbSyncClinic(){
+function fbSyncClinic(_isRetry){
   const F={...DEF_FB,...(CFG.firebase||{})};
   if(!F.dburl) return;
   const _syncT=(CFG.firebase&&CFG.firebase.syncToggles)||{};
@@ -13661,8 +14228,17 @@ function fbSyncClinic(){
     banking:   _bankingForSync,
     updatedAt: Date.now()
   };
-  fbPATCH(ciPath+'/settings', settingsData)
-    .catch(e=>console.warn('FB clinic settings sync:', e.message));
+  if(!_isRetry && typeof navigator!=='undefined' && navigator.onLine===false){
+    if(typeof window.qAdd==='function') window.qAdd('clinic',{});
+    return Promise.resolve(false);
+  }
+  const _settingsPromise = fbPATCH(ciPath+'/settings', settingsData)
+    .then(()=>true)
+    .catch(e=>{
+      console.warn('FB clinic settings sync:', e.message);
+      if(!_isRetry && typeof window.qAdd==='function') window.qAdd('clinic',{});
+      return false;
+    });
 
   const logoData = CFG.logo && CFG.logo.data ? CFG.logo.data : '';
   const logoPayload = logoData
@@ -13673,6 +14249,8 @@ function fbSyncClinic(){
 
   //  Also sync clinic info + logo to Supabase (if configured) 
   if(typeof window.sbSyncClinic === 'function') window.sbSyncClinic();
+
+  return _settingsPromise;
 }
 //  Selective Push Modal 
 (function(){
@@ -13926,19 +14504,19 @@ function fbPullAll(silent){
   _fbPullInFlight=true;
   if(!silent)setFBStatus('loading','Pulling from cloud...','#f39c12');
   var _ciPullPath=fbClinicInfoPath();
-  Promise.all([fbGET('bills'),fbGET('expenses'),fbGET('appointments'),fbGET(_ciPullPath),fbGET('patient_files'),fbGET('patient_file_images'),fbGET('prescriptions')])
-    .then(([billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData])=>{
+  Promise.all([fbGET('bills'),fbGET('expenses'),fbGET('appointments'),fbGET(_ciPullPath),fbGET('patient_files'),fbGET('patient_file_images'),fbGET('prescriptions'),fbGET('stock')])
+    .then(([billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData,stockData])=>{
       // If device-specific path returned null/empty, try shared fallback
       var _ciEmpty=!clinicInfo||(!clinicInfo.settings&&!clinicInfo.clinic);
       if(_ciEmpty && _ciPullPath!=='clinic_info'){
         return fbGET('clinic_info').then(function(sharedCI){
-          return [billData,expData,apptData,sharedCI||{},pfData,pfImgData,rxData];
+          return [billData,expData,apptData,sharedCI||{},pfData,pfImgData,rxData,stockData];
         });
       }
-      return [billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData];
+      return [billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData,stockData];
     })
-    .then(([billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData])=>{
-      var bAdded=0,bUpdated=0,eAdded=0,eUpdated=0,aAdded=0,aUpdated=0,pfAdded=0,pfUpdated=0,rxAdded=0,rxUpdated=0;
+    .then(([billData,expData,apptData,clinicInfo,pfData,pfImgData,rxData,stockData])=>{
+      var bAdded=0,bUpdated=0,eAdded=0,eUpdated=0,aAdded=0,aUpdated=0,pfAdded=0,pfUpdated=0,rxAdded=0,rxUpdated=0,stAdded=0,stUpdated=0;
       var conflicts=[];
       // _resolvedConflictIds already loaded from localStorage (persistent, 48hr TTL)
 
@@ -13991,6 +14569,27 @@ function fbPullAll(silent){
         });
         expenses=dedupById(expenses);
         svExp();
+      }
+
+      //  Stock 
+      if(stockData&&typeof stockData==='object'){
+        Object.values(stockData).filter(Boolean).forEach(function(rs){
+          if(!rs||!rs.id)return;
+          var idx=stockItems.findIndex(function(x){return x.id===rs.id||fbSafeKey(x.id)===fbSafeKey(rs.id);});
+          if(idx===-1){
+            stockItems.unshift(rs);stAdded++;
+          } else {
+            var local=stockItems[idx];
+            var remoteNewer=(rs.updatedAt||0)>(local.updatedAt||0);
+            if(remoteNewer){stockItems[idx]=rs;stUpdated++;}
+          }
+        });
+        stockItems=dedupById(stockItems);
+        svStock();
+        if(stAdded||stUpdated){
+          var stockTab=document.getElementById('tab-stock');
+          if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function') renderStock();
+        }
       }
 
       //  Prescriptions 
@@ -14220,7 +14819,7 @@ function fbPullAll(silent){
       if(conflicts.length>0){
         showFbConflictModal(conflicts, bAdded, eAdded, silent);
       } else {
-        if(!silent)alert('OK Sync done! Bills: '+bAdded+' new, '+bUpdated+' updated. Expenses: '+eAdded+' new, '+eUpdated+' updated. Appointments: '+aAdded+' new, '+aUpdated+' updated. Patient Files: '+pfAdded+' new, '+pfUpdated+' updated. Prescriptions: '+rxAdded+' new, '+rxUpdated+' updated.');
+        if(!silent)alert('OK Sync done! Bills: '+bAdded+' new, '+bUpdated+' updated. Expenses: '+eAdded+' new, '+eUpdated+' updated. Appointments: '+aAdded+' new, '+aUpdated+' updated. Patient Files: '+pfAdded+' new, '+pfUpdated+' updated. Prescriptions: '+rxAdded+' new, '+rxUpdated+' updated. Stock: '+stAdded+' new, '+stUpdated+' updated.');
       }
       _fbPullInFlight=false;
     })
@@ -14521,7 +15120,7 @@ function startFBListener(){
     }
   }
 
-  function applyRemoteData(billData, apptData, clinicInfo, expData, pfData, rxData){
+  function applyRemoteData(billData, apptData, clinicInfo, expData, pfData, rxData, stockData){
     let bChanged=false, aChanged=false;
 
     if(billData&&typeof billData==='object'){
@@ -14604,6 +15203,33 @@ function startFBListener(){
       if(_sseExpConflicts.length&&typeof showFbConflictModal==='function'){
         if(typeof nivaAudit==='function') _sseExpConflicts.forEach(c=>nivaAudit('conflict','expenses',c.id,'Concurrent edit detected (live sync)'));
         showFbConflictModal(_sseExpConflicts,0,0,false);
+      }
+    }
+
+    //  Stock realtime sync 
+    if(stockData&&typeof stockData==='object'){
+      let sChanged=false;
+      Object.entries(stockData).forEach(([remoteKey,rs])=>{
+        if(rs===null){
+          // null = remote delete -- remove locally if present
+          const before=stockItems.length;
+          stockItems=stockItems.filter(x=>fbSafeKey(x.id)!==remoteKey&&x.id!==remoteKey);
+          if(stockItems.length!==before){sChanged=true;idbDelete('stock',remoteKey).catch(()=>{});}
+          return;
+        }
+        if(!rs||!rs.id)return;
+        if(_resolvedConflictIds && _resolvedConflictIds.has(rs.id)) return; // skip resolved
+        const idx=stockItems.findIndex(x=>x.id===rs.id||fbSafeKey(x.id)===fbSafeKey(rs.id));
+        if(idx===-1){stockItems.unshift(rs);sChanged=true;}
+        else {
+          const remoteNewer=(rs.updatedAt||0)>(stockItems[idx].updatedAt||0);
+          if(remoteNewer){stockItems[idx]=rs;sChanged=true;}
+        }
+      });
+      if(sChanged){
+        stockItems=dedupById(stockItems);svStock();
+        const stockTab=document.getElementById('tab-stock');
+        if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function') renderStock();
       }
     }
 
@@ -14755,6 +15381,19 @@ function startFBListener(){
           var bankPanel = document.getElementById('set-banking');
           if(bankPanel && bankPanel.classList.contains('act') && typeof window.loadBankingForm==='function') window.loadBankingForm();
         }
+        // Doctors list -- previously not handled here at all, so live updates
+        // from another device (add/edit/delete doctor) never showed up until
+        // a manual "Pull All" + reload. Fixed to match fbPullAll's handling.
+        if(ciSettings.doctors&&Array.isArray(ciSettings.doctors)){
+          try{
+            doctorsList=ciSettings.doctors;
+            svDoctors();
+            var drPanel=document.getElementById('set-doctors');
+            if(drPanel&&drPanel.classList.contains('act')&&typeof drRender==='function') drRender();
+            if(typeof populateAllDoctorDropdowns==='function') populateAllDoctorDropdowns();
+            if(typeof populateApptDoctorDropdown==='function') populateApptDoctorDropdown();
+          }catch(e){ console.warn('[Doctors] realtime merge failed:', e); }
+        }
         CFG._clinicUpdatedAt=settingsUpdatedAt;
         saveSettings(CFG);updateTopbar();
       }
@@ -14857,6 +15496,15 @@ function startFBListener(){
                 svPF();if(typeof renderPF==='function')renderPF();
                 idbDelete('patient_files',remoteKey).catch(()=>{});
               }
+            } else if(nodeType==='stock'){
+              const before=stockItems.length;
+              stockItems=stockItems.filter(x=>fbSafeKey(x.id)!==remoteKey&&x.id!==remoteKey);
+              if(stockItems.length!==before){
+                svStock();
+                const stockTab=document.getElementById('tab-stock');
+                if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function')renderStock();
+                idbDelete('stock',remoteKey).catch(()=>{});
+              }
             } else if(nodeType==='patient_file_images'){
               // path = /patient_file_images/patientId  OR  /patient_file_images/patientId/imgId
               const imgKey=parts[2]||null;
@@ -14883,7 +15531,7 @@ function startFBListener(){
         }
         if(path==='/'||path===''){
           if(typeof d==='object'){
-            applyRemoteData(d.bills||null,d.appointments||null,d.clinic_info||null,d.expenses||null,d.patient_files||null,d.prescriptions||null);
+            applyRemoteData(d.bills||null,d.appointments||null,d.clinic_info||null,d.expenses||null,d.patient_files||null,d.prescriptions||null,d.stock||null);
             if(d.patient_file_images) applyRemoteImages(d.patient_file_images);
           }
         } else if(path==='/appointments'||path==='appointments'){
@@ -14898,6 +15546,8 @@ function startFBListener(){
           applyRemoteData(null,null,null,null,d);
         } else if(path==='/prescriptions'||path==='prescriptions'){
           applyRemoteData(null,null,null,null,null,d);
+        } else if(path==='/stock'||path==='stock'){
+          applyRemoteData(null,null,null,null,null,null,d);
         } else if(path==='/patient_file_images'||path==='patient_file_images'){
           applyRemoteImages(d);
         } else if(typeof d==='object'){
@@ -14917,6 +15567,9 @@ function startFBListener(){
           } else if(parts[0]==='prescriptions'){
             const wrap={};wrap[parts[1]||'_']=d;
             applyRemoteData(null,null,null,null,null,wrap);
+          } else if(parts[0]==='stock'){
+            const wrap={};wrap[parts[1]||'_']=d;
+            applyRemoteData(null,null,null,null,null,null,wrap);
           } else if(parts[0]==='patient_file_images'){
             // d = { imgId: {...} } under a patientId node
             // parts = ['patient_file_images', patientId, imgId?]
@@ -14990,6 +15643,15 @@ function startFBListener(){
               const before=prescriptions.length;
               prescriptions=prescriptions.filter(x=>fbSafeKey(x.id)!==remoteKey&&x.id!==remoteKey);
               if(prescriptions.length!==before){svRx();idbDelete('prescriptions',remoteKey).catch(()=>{});}
+            } else if(nodeType==='stock'){
+              const before=stockItems.length;
+              stockItems=stockItems.filter(x=>fbSafeKey(x.id)!==remoteKey&&x.id!==remoteKey);
+              if(stockItems.length!==before){
+                svStock();
+                const stockTab=document.getElementById('tab-stock');
+                if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function')renderStock();
+                idbDelete('stock',remoteKey).catch(()=>{});
+              }
             }
           });
         }
@@ -15001,7 +15663,8 @@ function startFBListener(){
             if(d.appointments&&typeof d.appointments==='object') _applyPatchDeletes('appointments',d.appointments);
             if(d.patient_files&&typeof d.patient_files==='object') _applyPatchDeletes('patient_files',d.patient_files);
             if(d.prescriptions&&typeof d.prescriptions==='object') _applyPatchDeletes('prescriptions',d.prescriptions);
-            applyRemoteData(d.bills||null,d.appointments||null,d.clinic_info||null,d.expenses||null,d.patient_files||null,d.prescriptions||null);
+            if(d.stock&&typeof d.stock==='object') _applyPatchDeletes('stock',d.stock);
+            applyRemoteData(d.bills||null,d.appointments||null,d.clinic_info||null,d.expenses||null,d.patient_files||null,d.prescriptions||null,d.stock||null);
             if(d.patient_file_images) applyRemoteImages(d.patient_file_images);
           }
         } else if(path==='/appointments'||path==='appointments'){
@@ -15021,6 +15684,9 @@ function startFBListener(){
         } else if(path==='/prescriptions'||path==='prescriptions'){
           if(typeof d==='object') _applyPatchDeletes('prescriptions',d);
           applyRemoteData(null,null,null,null,null,d);
+        } else if(path==='/stock'||path==='stock'){
+          if(typeof d==='object') _applyPatchDeletes('stock',d);
+          applyRemoteData(null,null,null,null,null,null,d);
         } else if(path==='/patient_file_images'||path==='patient_file_images'){
           if(typeof d==='object') applyRemoteImages(d);
         } else if(typeof d==='object'){
@@ -15041,6 +15707,9 @@ function startFBListener(){
           } else if(parts[0]==='prescriptions'){
             const wrap={};wrap[parts[1]||'_']=d;
             applyRemoteData(null,null,null,null,null,wrap);
+          } else if(parts[0]==='stock'){
+            const wrap={};wrap[parts[1]||'_']=d;
+            applyRemoteData(null,null,null,null,null,null,wrap);
           } else if(parts[0]==='patient_file_images'){
             if(parts.length>=2){
               const wrapImg={};wrapImg[parts[1]]=parts[2]?{[parts[2]]:d}:d;
@@ -15084,9 +15753,9 @@ function startFBListener(){
       const Fp={...DEF_FB,...(CFG.firebase||{})};
       if(Fp.dburl && Fp.realtime!==false){
         if(_fbAuthExpiry && Date.now()>_fbAuthExpiry-60000){ _fbAuthToken=null; }
-        Promise.all([fbGET('bills'),fbGET('appointments'),fbGET(fbClinicInfoPath()),fbGET('expenses'),fbGET('patient_files'),fbGET('patient_file_images'),fbGET('prescriptions')])
-          .then(([billData,apptData,clinicInfo,expData,pfData,pfImgData,rxData])=>{
-            applyRemoteData(billData,apptData,clinicInfo,expData,pfData,rxData);
+        Promise.all([fbGET('bills'),fbGET('appointments'),fbGET(fbClinicInfoPath()),fbGET('expenses'),fbGET('patient_files'),fbGET('patient_file_images'),fbGET('prescriptions'),fbGET('stock')])
+          .then(([billData,apptData,clinicInfo,expData,pfData,pfImgData,rxData,stockData])=>{
+            applyRemoteData(billData,apptData,clinicInfo,expData,pfData,rxData,stockData);
             if(pfImgData) applyRemoteImages(pfImgData);
             setFBStatus('loading',`⏳ SSE retry ${_sseRetry} -- next in ${delaySec}s`,'#f39c12');
           })
@@ -15785,7 +16454,7 @@ renderItms();renderAll();
   if(lockImg&&lockTooth){
     if(logo.data){lockImg.src=logo.data;lockImg.style.display='block';lockTooth.style.display='none';}
   }
-  //  SECURITY CONSTANTS 
+  //  SECURITY CONSTANTS  #SEC:SECURITY
   const MAX_ATTEMPTS = 5;          // lockout after this many wrong tries
   const LOCKOUT_MS   = 5 * 60 * 1000; // 5-minute lockout
   const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8-hour auto-logout
@@ -15797,16 +16466,19 @@ renderItms();renderAll();
   }
 
   //  MIGRATE old btoa passwords to SHA-256 on first run 
+  //  SECURITY: no hardcoded default password is seeded. A fresh install has
+  //  NO niva_pw_v2 until the user explicitly sets one (checkPassword() below
+  //  detects the missing hash and forces a first-run password setup).
   (async function migratePassword(){
     const old = localStorage.getItem('niva_pw');
-    if(!old){
-      // First ever run -- set default password as SHA-256
-      const h = await sha256('niva123');
-      localStorage.setItem('niva_pw_v2', h);
-    } else if(!localStorage.getItem('niva_pw_v2')){
-      // Existing user with old btoa password -- migrate
-      try { const plain = atob(old); const h = await sha256(plain); localStorage.setItem('niva_pw_v2', h); }
-      catch(e){ const h = await sha256('niva123'); localStorage.setItem('niva_pw_v2', h); }
+    if(old && !localStorage.getItem('niva_pw_v2')){
+      // Existing user with old btoa password -- migrate it as-is (their own
+      // chosen password), never fall back to a shared default.
+      try {
+        const plain = atob(old);
+        const h = await sha256(plain);
+        localStorage.setItem('niva_pw_v2', h);
+      } catch(e){ /* corrupt legacy value -- leave unset, user sets fresh password on next unlock attempt */ }
       localStorage.removeItem('niva_pw');
     }
   })();
@@ -15881,6 +16553,28 @@ async function checkPassword(){
   const val = document.getElementById('lock-input').value;
   if(!val){ document.getElementById('lock-err').textContent='Please enter your password.'; return; }
 
+  const stored = localStorage.getItem('niva_pw_v2');
+
+  //  SECURITY: no password has ever been set on this device -- force the
+  //  user to create one now instead of silently trusting a known default.
+  if(!stored){
+    if(val.length<6){ document.getElementById('lock-err').textContent='Set a password: minimum 6 characters.'; return; }
+    const confirmVal = prompt('Confirm your new password:');
+    if(confirmVal!==val){ document.getElementById('lock-err').textContent='Passwords did not match. Try again.'; return; }
+    const buf0 = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
+    const h0 = Array.from(new Uint8Array(buf0)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    localStorage.setItem('niva_pw_v2', h0);
+    resetAttempts();
+    localStorage.setItem('niva_unlocked','1');
+    localStorage.setItem('niva_login_time', Date.now().toString());
+    document.getElementById('lockscreen').style.display='none';
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-err').textContent='';
+    if(typeof window._checkLoginAfterUnlock === 'function') window._checkLoginAfterUnlock();
+    alert('✓ Password set successfully. Use this password to unlock next time.');
+    return;
+  }
+
   // Check lockout
   const st = getAttemptState();
   if(st.lockedUntil > Date.now()){
@@ -15890,7 +16584,6 @@ async function checkPassword(){
   // SHA-256 hash comparison
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(val));
   const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  const stored = localStorage.getItem('niva_pw_v2');
 
   if(hash === stored){
     //  Correct -- unlock
@@ -17142,7 +17835,15 @@ function showApptSub(name, btn) {
 
 function renderApptTabFull() {
   renderApptStats();
-  renderApptToday();
+  // Refresh whichever sub-tab (Today / Upcoming / All) is currently visible so
+  // realtime (Firebase/Supabase) updates actually show up regardless of which
+  // sub-view the user is looking at -- previously this only refreshed "Today",
+  // so live updates silently didn't appear while viewing Upcoming/All.
+  const cur = _apptSubCurrent || 'today';
+  if (cur === 'upcoming') renderApptTab();
+  else if (cur === 'all') renderApptAll();
+  else if (cur === 'add') { if(typeof renderApptRecent==='function') renderApptRecent(); renderApptToday(); }
+  else renderApptToday();
 }
 
 function renderApptStats() {
@@ -18516,10 +19217,13 @@ window.showSetSection=function(id,btn){
 </script>
 
 <!-- MOBILE FAB - Add Patient -->
-<button id="mob-fab-newbill" class="mob-fab" style="bottom:88px;font-size:28px;font-weight:700" onclick="showTab('newbill',document.getElementById('mob-fab-newbill'));window.scrollTo(0,0)" title="Add Patient"><span style="color:#fff;line-height:1">+</span></button>
+<button id="mob-fab-newbill" class="mob-fab" style="bottom:152px;font-size:28px;font-weight:700" onclick="showTab('newbill',document.getElementById('mob-fab-newbill'));window.scrollTo(0,0)" title="Add Patient"><span style="color:#fff;line-height:1">+</span></button>
 
 <!-- MOBILE FAB - Quick appointment booking -->
-<button id="mob-fab-appt" class="mob-fab" onclick="showTab('appointments',document.getElementById('mob-fab-appt'));setTimeout(()=>showApptSub('add',document.getElementById('appt-sub-btn-add')),80)" title="📅 Book Appointment">📅</button>
+<button id="mob-fab-appt" class="mob-fab" style="bottom:88px" onclick="showTab('appointments',document.getElementById('mob-fab-appt'));setTimeout(()=>showApptSub('add',document.getElementById('appt-sub-btn-add')),80)" title="📅 Book Appointment">📅</button>
+
+<!-- MOBILE FAB - Quick stock add (below Appointment FAB) -->
+<button id="mob-fab-stock" class="mob-fab" style="bottom:24px" onclick="showTab('stock',document.getElementById('mob-fab-stock'));setTimeout(()=>openStockQuickAdd(),80)" title="📦 Add Stock">📦</button>
 
 <!-- GreenCheck Footer Bar -->
 <div style="text-align:center;padding:10px 16px;font-size:11px;color:#aaa;background:#f8fafc;border-top:1px solid #e8edf0;margin-top:4px;line-height:1.8">
@@ -20870,6 +21574,7 @@ function pfOpenDetail(pid){
   pfRenderImages(p);
   pfFdiLoadChart(p);
   pfRenderTreatments(p);
+  if(typeof pfRenderConsents==='function') pfRenderConsents(p);
 
   // Auto-fetch images from Firebase if any are missing dataUrl (bija device thi add thayelaa)
   var _missingDataUrl=(p.images||[]).some(function(img){return !img.dataUrl;});
@@ -22106,6 +22811,7 @@ if(!doctorsList.length){
 
 function drGenId(){ return 'DR' + Date.now().toString(36).toUpperCase(); }
 
+//  DOCTORS MODULE (list save/render + Firebase sync)  #SEC:DOCTORS
 function drRender(){
   const wrap = document.getElementById('doctor-list-wrap');
   if(!wrap) return;
@@ -22171,16 +22877,23 @@ function drDelete(id){
 }
 
 function fbPushDoctors(){
-  if(typeof fbConfigured==='undefined'||!fbConfigured) return;
+  var _fbOk=!!(typeof CFG!=='undefined'&&CFG.firebase&&CFG.firebase.dburl);
+  if(!_fbOk) return;
   var _ciPath=fbClinicInfoPath();
+  // SECURITY/DATA-INTEGRITY FIX: previously this used fbPUT (HTTP PUT = full
+  // node replace), which would silently WIPE sibling settings fields
+  // (apptMsg, printformat, rxprintformat, email, banking...) on Firebase any
+  // time a doctor was added/edited/deleted -- and would also stomp any more
+  // recent clinic/billing/theme edit made from another device, since it sent
+  // stale local copies of fields this function doesn't own. Every other sync
+  // function in this app (fbSyncClinic, fbSyncBill, fbSyncAppt, etc.) already
+  // uses fbPATCH (merge) for exactly this reason -- this brings doctors sync
+  // in line with that pattern and only sends the fields it actually owns.
   var settingsPayload={
-    clinic:    CFG.clinic||{},
-    billing:   CFG.billing||{},
-    theme:     CFG.theme||{},
     doctors:   (typeof doctorsList!=='undefined'?doctorsList:[]),
     updatedAt: Date.now()
   };
-  fbPUT(_ciPath+'/settings', settingsPayload).then(function(){
+  fbPATCH(_ciPath+'/settings', settingsPayload).then(function(){
     console.log('Doctors synced to Firebase \u2713');
   }).catch(function(e){
     console.warn('fbPushDoctors failed:',e.message);
@@ -22203,7 +22916,7 @@ function drQuickWA(id){
 
 //  Populate ALL doctor dropdowns (nb-dr, eb-dr, pf-tx-doctor, appt-doctor) 
 function populateAllDoctorDropdowns(targetId, currentVal){
-  const ids = targetId ? [targetId] : ['nb-dr','eb-dr','pf-tx-doctor'];
+  const ids = targetId ? [targetId] : ['nb-dr','eb-dr','pf-tx-doctor','pf-consent-doctor'];
   ids.forEach(function(id){
     const sel = document.getElementById(id);
     if(!sel || sel.tagName!=='SELECT') return;
@@ -22281,29 +22994,36 @@ function openQuickAddDoctorModal(returnSelectId){
   document.getElementById('qdr-name').value = '';
   document.getElementById('qdr-phone').value = '';
   document.getElementById('qdr-spec').value = '';
-  document.getElementById('quick-add-dr-modal').classList.add('open');
+  openM('quick-add-dr-modal');
   setTimeout(function(){ document.getElementById('qdr-name').focus(); }, 100);
 }
 function closeQuickAddDoctorModal(){
-  document.getElementById('quick-add-dr-modal').classList.remove('open');
+  closeM('quick-add-dr-modal');
 }
 function saveQuickAddDoctor(){
-  const name = document.getElementById('qdr-name').value.trim();
-  const phone = document.getElementById('qdr-phone').value.replace(/\D/g,'').slice(-10);
-  const spec = document.getElementById('qdr-spec').value.trim();
-  if(!name){ alert('Doctor name જરૂરી છે.'); return; }
-  if(!phone){ alert('Mobile number જરૂરી છે.'); return; }
-  const newDr = {id:drGenId(), name:name, phone:phone, spec:spec, days:''};
-  doctorsList.push(newDr);
-  svDoctors();
-  drRender();
-  // Populate all dropdowns and select the new doctor in the originating select
-  populateAllDoctorDropdowns();
-  populateApptDoctorDropdown();
-  if(_quickAddDrReturnSelectId){
-    populateAllDoctorDropdowns(_quickAddDrReturnSelectId, name);
+  try{
+    const name = document.getElementById('qdr-name').value.trim();
+    const phone = document.getElementById('qdr-phone').value.replace(/\D/g,'').slice(-10);
+    const spec = document.getElementById('qdr-spec').value.trim();
+    if(!name){ alert('Doctor name જરૂરી છે.'); return; }
+    if(!phone){ alert('Mobile number જરૂરી છે.'); return; }
+    const newDr = {id:drGenId(), name:name, phone:phone, spec:spec, days:''};
+    doctorsList.push(newDr);
+    svDoctors();
+    try{ drRender(); }catch(e){ console.warn('[QuickAddDr] drRender failed:', e); }
+    // Populate all dropdowns and select the new doctor in the originating select
+    try{ populateAllDoctorDropdowns(); }catch(e){ console.warn('[QuickAddDr] populateAllDoctorDropdowns failed:', e); }
+    try{ populateApptDoctorDropdown(); }catch(e){ console.warn('[QuickAddDr] populateApptDoctorDropdown failed:', e); }
+    if(_quickAddDrReturnSelectId){
+      try{ populateAllDoctorDropdowns(_quickAddDrReturnSelectId, name); }catch(e){ console.warn('[QuickAddDr] target dropdown populate failed:', e); }
+    }
+    try{ if(typeof fbPushDoctors==='function') fbPushDoctors(); }catch(e){ console.warn('[QuickAddDr] fbPushDoctors failed:', e); }
+  }catch(err){
+    console.error('[QuickAddDr] saveQuickAddDoctor error:', err);
+    alert('Doctor save karva ma error aavi. Fari try karo.');
+  }finally{
+    closeQuickAddDoctorModal();
   }
-  closeQuickAddDoctorModal();
 }
 
 //  Populate appointment modal doctor dropdown 
@@ -22632,45 +23352,103 @@ if('serviceWorker' in navigator && location.protocol === 'https:'){
 
 //  1. Offline queue 
 var QUEUE_KEY = 'niva_offline_queue';
+var QUEUE_MAX = 300; // hard cap -- avoid unbounded growth if offline for a very long time
 
 function qLoad(){ try{ return JSON.parse(localStorage.getItem(QUEUE_KEY)||'[]'); }catch(e){ return []; } }
 function qSave(q){ try{ localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); }catch(e){} }
 
+//  OFFLINE SYNC QUEUE (NivaQ -- queues writes made while offline, flushes on reconnect)  #SEC:SYNC-QUEUE
 function qAdd(type, payload){
   var q = qLoad();
-  // Deduplicate: replace same type+id if already queued
-  var idx = q.findIndex(function(x){ return x.type===type && x.id===(payload.id||payload.billId||''); });
-  var entry = { type: type, payload: payload, ts: Date.now(), id: payload.id||payload.billId||'' };
+  // Deduplicate: replace same type+id if already queued (keeps only the
+  // latest edit per record -- avoids replaying stale intermediate versions)
+  var pid = (payload&&(payload.id||payload.billId))||'';
+  var idx = q.findIndex(function(x){ return x.type===type && x.id===pid; });
+  var entry = { type: type, payload: payload, ts: Date.now(), id: pid, attempts: 0, nextRetryAt: 0 };
   if(idx >= 0) q[idx] = entry; else q.push(entry);
+  if(q.length > QUEUE_MAX){
+    var trimmed = q.length - QUEUE_MAX;
+    q = q.slice(q.length - QUEUE_MAX); // drop oldest first, keep most recent edits
+    if(typeof nivaAudit==='function') nivaAudit('sync-queue-trim','queue','','Offline queue exceeded '+QUEUE_MAX+' -- '+trimmed+' oldest entries dropped');
+  }
   qSave(q);
+  if(typeof _updateOfflineIndicator==='function'){ try{ _updateOfflineIndicator(); }catch(e){} }
 }
 
+// Flush the queue, retrying failed writes with capped exponential backoff.
+// An entry is only removed once its sync call resolves truthy (confirmed
+// server acknowledgement) -- a failed/offline attempt keeps it queued and
+// schedules the next retry instead of silently dropping it.
+var _qFlushing = false;
 function qFlush(){
+  if(_qFlushing) return; // avoid overlapping flushes (online + visibilitychange can both fire)
   var q = qLoad();
   if(!q.length) return;
   if(!navigator.onLine) return;
+  _qFlushing = true;
+
   var remaining = [];
-  q.forEach(function(entry){
-    var ok = false;
-    try {
-      if(entry.type==='bill'    && typeof window.fbSyncBill==='function'){ window.fbSyncBill(entry.payload);    ok=true; }
-      if(entry.type==='appt'    && typeof window.fbSyncAppt==='function'){ window.fbSyncAppt(entry.payload);    ok=true; }
-      if(entry.type==='expense' && typeof window.fbSyncExp==='function') { window.fbSyncExp(entry.payload);     ok=true; }
-      if(entry.type==='pf'      && typeof window.fbSyncPF==='function')  { window.fbSyncPF(entry.payload);      ok=true; }
-      if(entry.type==='clinic'  && typeof window.fbSyncClinic==='function'){ window.fbSyncClinic();             ok=true; }
-    } catch(e){ ok=false; }
-    if(!ok) remaining.push(entry);
-  });
-  qSave(remaining);
-  if(remaining.length < q.length){
-    console.log('[NivaQ] Flushed '+(q.length-remaining.length)+' queued writes.');
+  var flushedCount = 0;
+  var idx = 0;
+
+  function next(){
+    if(idx >= q.length){
+      qSave(remaining);
+      _qFlushing = false;
+      if(flushedCount) console.log('[NivaQ] Flushed '+flushedCount+' queued writes.');
+      if(typeof _updateOfflineIndicator==='function'){ try{ _updateOfflineIndicator(); }catch(e){} }
+      if(remaining.length){
+        var soonest = remaining.reduce(function(m,r){ return Math.min(m, r.nextRetryAt||Date.now()); }, Infinity);
+        var wait = Math.max(1000, soonest - Date.now());
+        if(window._qFlushTimer) clearTimeout(window._qFlushTimer);
+        window._qFlushTimer = setTimeout(qFlush, wait);
+      }
+      return;
+    }
+    var entry = q[idx++];
+    if(entry.nextRetryAt && Date.now() < entry.nextRetryAt){ remaining.push(entry); next(); return; }
+    if(!navigator.onLine){ remaining.push(entry); next(); return; }
+
+    var p;
+    try{
+      if(entry.type==='bill'    && typeof window.fbSyncBill==='function')   p = window.fbSyncBill(entry.payload, true);
+      else if(entry.type==='appt'    && typeof window.fbSyncAppt==='function')   p = window.fbSyncAppt(entry.payload, true);
+      else if(entry.type==='expense' && typeof window.fbSyncExp==='function')    p = window.fbSyncExp(entry.payload, true);
+      else if(entry.type==='pf'      && typeof window.fbSyncPF==='function')     p = window.fbSyncPF(entry.payload, true);
+      else if(entry.type==='clinic'  && typeof window.fbSyncClinic==='function') p = window.fbSyncClinic(true);
+      else p = Promise.resolve(true); // unknown entry type -- drop rather than retry forever
+    }catch(e){ p = Promise.resolve(false); }
+
+    Promise.resolve(p).then(function(ok){
+      if(ok){
+        flushedCount++;
+        if(typeof nivaAudit==='function') nivaAudit('sync','queue',entry.id,'Queued write flushed on reconnect ('+entry.type+')');
+      } else {
+        entry.attempts = (entry.attempts||0)+1;
+        // 2s,4s,8s,16s,32s,64s -- capped at 60s so it never hammers, never gives up
+        var delay = Math.min(60000, 1000*Math.pow(2, Math.min(entry.attempts,6)));
+        entry.nextRetryAt = Date.now()+delay;
+        remaining.push(entry);
+      }
+      next();
+    }).catch(function(){
+      entry.attempts = (entry.attempts||0)+1;
+      entry.nextRetryAt = Date.now()+Math.min(60000, 1000*Math.pow(2, Math.min(entry.attempts,6)));
+      remaining.push(entry);
+      next();
+    });
   }
+  next();
 }
+
+// Expose on window -- fbSyncBill/Appt/Exp/PF/Clinic (defined in an earlier,
+// separate <script> block) call window.qAdd() when a write fails or the
+// device is offline, so they must reach this closure's qAdd via window.
+window.qAdd = qAdd;
 
 // Intercept Firebase sync functions -- wrap with offline queue
 // NO function wrapping -- avoids triple-wrap corruption with Supabase hooks
-// Offline queue is used only by qFlush on reconnect
-// Sync functions call qAdd directly when offline (handled in sv/svAppt etc.)
+// Sync functions call window.qAdd() directly when offline or a write fails.
 
 // Flush on reconnect
 window.addEventListener('online', function(){
@@ -22685,10 +23463,16 @@ document.addEventListener('visibilitychange', function(){
   }
 });
 
+// Periodic safety-net -- some mobile WebViews/PWAs don't fire 'online'
+// reliably after a flaky connection. This is a no-op (returns instantly)
+// whenever the queue is empty, so it costs nothing in the common case.
+setInterval(function(){ if(navigator.onLine) qFlush(); }, 45000);
+
 // Show pending count in status bar if any
 window._nivaQueueCount = function(){ return qLoad().length; };
 window._nivaQueueFlush = qFlush;
 console.log('[NivaQ] Offline queue ready.');
+
 
 
 //  2. Logo auto-sync to Firebase + Supabase when logo changes 
@@ -23006,6 +23790,7 @@ function sbEnsureTables(){
     .then(function(){ return sbFetch('niva_appointments?limit=1','GET'); })
     .then(function(){ return sbFetch('niva_expenses?limit=1','GET'); })
     .then(function(){ return sbFetch('niva_patient_files?limit=1','GET'); })
+    .then(function(){ return sbFetch('niva_stock?limit=1','GET'); })
     .then(function(){ return sbFetch('niva_settings?limit=1','GET'); });
 }
 
@@ -23116,8 +23901,10 @@ window.sbSyncBill    = function(b){ return sbUpsert('niva_bills', b); };
 window.sbSyncAppt    = function(a){ return sbUpsert('niva_appointments', a); };
 window.sbSyncExp     = function(e){ return sbUpsert('niva_expenses', e); };
 window.sbSyncPF      = function(p){ return sbUpsert('niva_patient_files', p); };
+window.sbSyncStock   = function(s){ return sbUpsert('niva_stock', s); };
 window.sbDeleteBill  = function(id){ return sbDelete('niva_bills', id); };
 window.sbDeleteAppt  = function(id){ return sbDelete('niva_appointments', id); };
+window.sbDeleteStock = function(id){ return sbDelete('niva_stock', id); };
 
 //  Supabase: Push clinic info + logo 
 // Stores clinic settings (name, address, doctor, billing, theme) and logo
@@ -23272,7 +24059,7 @@ window.sbTestConnection = function(){
 
 function sbCreateTableSQL(){
   var secret = (sbGetConfig().secret||'').trim() || 'CHANGE_ME_STRONG_SECRET';
-  var tables = ['niva_bills','niva_appointments','niva_expenses','niva_patient_files','niva_settings'];
+  var tables = ['niva_bills','niva_appointments','niva_expenses','niva_patient_files','niva_stock','niva_settings'];
   var L = [];
   L.push('-- ============================================');
   L.push('-- NIVA DENTAL -- Supabase Setup SQL (auto-generated, security-hardened)');
@@ -23429,6 +24216,7 @@ window.sbFullSync = function(){
   var apptRows  = (window.appointments||[]).filter(Boolean).map(function(a){ return {id:a.id,data:JSON.stringify(a),updated_at:new Date().toISOString()}; });
   var expRows   = (window.expenses||[]).filter(Boolean).map(function(e){ return {id:e.id,data:JSON.stringify(e),updated_at:new Date().toISOString()}; });
   var pfRows    = (window.patientFiles||[]).filter(Boolean).map(function(p){ return {id:p.id,data:JSON.stringify(p),updated_at:new Date().toISOString()}; });
+  var stockRows = (window.stockItems||stockItems||[]).filter(Boolean).map(function(s){ return {id:s.id,data:JSON.stringify(s),updated_at:new Date().toISOString()}; });
 
   function batchUpsert(table, rows){
     if(!rows.length) return Promise.resolve();
@@ -23442,11 +24230,12 @@ window.sbFullSync = function(){
     batchUpsert('niva_bills', billRows),
     batchUpsert('niva_appointments', apptRows),
     batchUpsert('niva_expenses', expRows),
-    batchUpsert('niva_patient_files', pfRows)
+    batchUpsert('niva_patient_files', pfRows),
+    batchUpsert('niva_stock', stockRows)
   ])
   .then(function(){
     sbSetStatus('ok');
-    var total = billRows.length + apptRows.length + expRows.length + pfRows.length;
+    var total = billRows.length + apptRows.length + expRows.length + pfRows.length + stockRows.length;
     if(msg){ msg.style.color='#1b6e35'; msg.textContent='✅ Synced ' + total + ' records to Supabase successfully!'; }
   })
   .catch(function(e){
@@ -23481,11 +24270,23 @@ function _sbHookSyncFunctions(){
   window.fbSyncPF = function(p){
     if(typeof _origFbSyncPF==='function') _origFbSyncPF(p);
   };
+  // Wrap fbSyncStock
+  var _origFbSyncStock = window.fbSyncStock;
+  window.fbSyncStock = function(s){
+    if(typeof _origFbSyncStock==='function') _origFbSyncStock(s);
+    window.sbSyncStock(s);
+  };
   // Wrap fbDeleteAppt
   var _origFbDeleteAppt = window.fbDeleteAppt;
   window.fbDeleteAppt = function(id){
     if(typeof _origFbDeleteAppt==='function') _origFbDeleteAppt(id);
     window.sbDeleteAppt(id);
+  };
+  // Wrap fbDeleteStock
+  var _origFbDeleteStock = window.fbDeleteStock;
+  window.fbDeleteStock = function(id){
+    if(typeof _origFbDeleteStock==='function') _origFbDeleteStock(id);
+    window.sbDeleteStock(id);
   };
   console.log('[NivaSB] Sync hooks attached');
 }
@@ -23552,7 +24353,8 @@ console.log('[NivaSB] Supabase dual sync loaded');
     Promise.all([
       window.sbPullTable ? window.sbPullTable('niva_bills','bills',true) : Promise.resolve(),
       window.sbPullTable ? window.sbPullTable('niva_appointments','appointments',true) : Promise.resolve(),
-      window.sbPullTable ? window.sbPullTable('niva_expenses','expenses',true) : Promise.resolve()
+      window.sbPullTable ? window.sbPullTable('niva_expenses','expenses',true) : Promise.resolve(),
+      window.sbPullTable ? window.sbPullTable('niva_stock','stock',true) : Promise.resolve()
     ]).then(function(){
       sbSetStatus('ok');
       console.log('[NivaSB] Startup pull complete');
@@ -23633,10 +24435,12 @@ console.log('[NivaSB] Supabase dual sync loaded');
         window[globalKey] = merged;
 
         // Save to localStorage + IDB
-        var lsKey = localKey==='bills' ? 'niva_dental_v3' : localKey==='appointments' ? 'niva_appointments' : localKey==='expenses' ? 'niva_expenses' : 'niva_patient_files';
+        var lsKey = localKey==='bills' ? 'niva_dental_v3' : localKey==='appointments' ? 'niva_appointments' : localKey==='expenses' ? 'niva_expenses' : localKey==='stock' ? 'niva_stock' : 'niva_patient_files';
         try{ localStorage.setItem(lsKey, JSON.stringify(merged)); }catch(e){}
         var idbKey = localKey==='patientFiles' ? 'patient_files' : localKey;
         try{ if(typeof idbSaveAll==='function') idbSaveAll(idbKey, merged); }catch(e){}
+        //  Also keep the bare `stockItems` variable in sync (used directly by renderStock/openStockQuickAdd) 
+        if(localKey==='stock'){ try{ stockItems = merged; }catch(e){} }
 
         console.log('[NivaSB] Realtime poll: '+remote.length+' new/updated in '+table);
 
@@ -23653,6 +24457,15 @@ console.log('[NivaSB] Supabase dual sync loaded');
         // Re-render UI
         if(typeof renderAll==='function') renderAll();
         if(typeof renderDash==='function') renderDash();
+        if(localKey==='appointments'){
+          try{ if(typeof renderApptTabFull==='function') renderApptTabFull(); }catch(e){ console.warn('[NivaSB] appt render failed:', e); }
+        }
+        if(localKey==='expenses'){
+          try{ if(typeof renderExp==='function') renderExp(); }catch(e){ console.warn('[NivaSB] expense render failed:', e); }
+        }
+        if(localKey==='stock'){
+          try{ var stockTab=document.getElementById('tab-stock'); if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function') renderStock(); }catch(e){}
+        }
       })
       .catch(function(e){
         console.warn('[NivaSB] Poll error '+table+':', e.message);
@@ -23665,6 +24478,7 @@ console.log('[NivaSB] Supabase dual sync loaded');
     _sbPollTable('niva_bills',        'bills',        'bills');
     _sbPollTable('niva_appointments', 'appointments', 'appointments');
     _sbPollTable('niva_expenses',     'expenses',     'expenses');
+    _sbPollTable('niva_stock',        'stock',        'stockItems');
   }
 
   // Start polling after page is fully loaded
@@ -23698,6 +24512,7 @@ window.sbPushTable = function(table, localKey){
   else if(localKey==='appointments') localArr = window.appointments||[];
   else if(localKey==='expenses')     localArr = window.expenses||[];
   else if(localKey==='patientFiles') localArr = window.patientFiles||[];
+  else if(localKey==='stock')        localArr = window.stockItems||stockItems||[];
 
   localArr = localArr.filter(Boolean);
   if(!localArr.length){
@@ -23744,6 +24559,7 @@ window.sbPullTable = function(table, localKey, skipRender){
     else if(localKey==='appointments') localArr = window.appointments||[];
     else if(localKey==='expenses')     localArr = window.expenses||[];
     else if(localKey==='patientFiles') localArr = window.patientFiles||[];
+    else if(localKey==='stock')        localArr = window.stockItems||stockItems||[];
 
     //  FIXED: ID-normalize merge -- prevents Firebase (dot->underscore) vs Supabase ID duplicates 
     function _sbSafeId(id){ return (id||'').replace(/[.#$\[\]]/g,'_'); }
@@ -23792,6 +24608,12 @@ window.sbPullTable = function(table, localKey, skipRender){
       window.expenses = merged;
       try{ localStorage.setItem('niva_expenses', JSON.stringify(merged)); }catch(e){}
       try{ if(typeof idbSaveAll==='function') idbSaveAll('expenses', merged); }catch(e){}
+    } else if(localKey==='stock'){
+      window.stockItems = merged;
+      stockItems = merged;
+      try{ localStorage.setItem('niva_stock', JSON.stringify(merged)); }catch(e){}
+      try{ if(typeof idbSaveAll==='function') idbSaveAll('stock', merged); }catch(e){}
+      try{ var stockTab=document.getElementById('tab-stock'); if(stockTab&&stockTab.classList.contains('act')&&typeof renderStock==='function') renderStock(); }catch(e){}
     } else if(localKey==='patientFiles'){
       //  Dedup before saving: remove id-based duplicates, then dedup treatments 
       var dedupedMerged = merged;
@@ -23834,7 +24656,8 @@ window.sbPullAll = function(){
   Promise.all([
     window.sbPullTable('niva_bills','bills',true),
     window.sbPullTable('niva_appointments','appointments',true),
-    window.sbPullTable('niva_expenses','expenses',true)
+    window.sbPullTable('niva_expenses','expenses',true),
+    window.sbPullTable('niva_stock','stock',true)
   ]).then(function(){
     // Single render after all tables merged
     try{ if(typeof renderAll==='function') renderAll(); }catch(e){}
@@ -24148,7 +24971,7 @@ function applyRoleRestrictions(){
   var perms = r.permissions || {};
   var allowedTabs = isDr ? null : (perms.tabs || []);
 
-  var allTabs = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'];
+  var allTabs = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','stock','viewbills','expenses','reports','settings'];
   allTabs.forEach(function(t){
     document.querySelectorAll('.nav button').forEach(function(btn){
       if(btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'"+t+"'")>=0){
@@ -24205,8 +25028,8 @@ function _renderStaffListUI(list){
     el.innerHTML = '<div style="font-size:12px;color:#aaa;text-align:center;padding:14px;background:#fff;border:1px solid #e0e8ee;border-radius:8px">No staff members added yet.</div>';
     return;
   }
-  var allTabKeys = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'];
-  var tabLabels  = {dashboard:'Dashboard',newbill:'Add Patient/Bill',cashbook:'View Patient',patientfile:'Patient File',appointments:'Appointments',prescription:'Prescription',viewbills:'Cash Book',expenses:'Expenses',reports:'Reports',settings:'Settings'};
+  var allTabKeys = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','stock','viewbills','expenses','reports','settings'];
+  var tabLabels  = {dashboard:'Dashboard',newbill:'Add Patient/Bill',cashbook:'View Patient',patientfile:'Patient File',appointments:'Appointments',prescription:'Prescription',stock:'Stock',viewbills:'Cash Book',expenses:'Expenses',reports:'Reports',settings:'Settings'};
   el.innerHTML = list.map(function(s){
     var isDoc = s.role === 'doctor';
     var tabs = (s.permissions&&s.permissions.tabs)||[];
@@ -24294,7 +25117,7 @@ window.saveStaffEdit = function(email){
   var list = getStaffRoles();
   var idx = -1; list.forEach(function(s,i){ if(s.email.toLowerCase()===email.toLowerCase()) idx=i; });
   if(idx<0) return;
-  var allTabKeys = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'];
+  var allTabKeys = ['dashboard','newbill','cashbook','patientfile','appointments','prescription','stock','viewbills','expenses','reports','settings'];
   var tabs = allTabKeys.filter(function(t){ var el=document.getElementById(eid+'-tab-'+t); return el&&el.checked; });
   var spDC = {};
   Object.keys(DEF_DASHCARDS).forEach(function(k){
@@ -24338,7 +25161,7 @@ window.addStaffMember = function(){
   var perms = null;
   if(role === 'reception'){
     var tabs = [];
-    ['dashboard','newbill','cashbook','patientfile','appointments','prescription','viewbills','expenses','reports','settings'].forEach(function(t){
+    ['dashboard','newbill','cashbook','patientfile','appointments','prescription','stock','viewbills','expenses','reports','settings'].forEach(function(t){
       var el = document.getElementById('sp-'+t);
       if(el && el.checked) tabs.push(t);
     });
